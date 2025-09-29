@@ -1,0 +1,95 @@
+body {
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #ffecd2, #fcb69f, #ffdde1, #c2e9fb);
+    background-size: 400% 400%;
+    animation: gradientBG 15s ease infinite;
+    margin: 0;
+    padding: 0;
+    color: #000;
+}
+
+/* Анимация (фон қозғалып тұрады) */
+@keyframes gradientBG {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+header {
+    background: transparent; /* фонсыз, градиент артта көрінеді */
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.logo {
+    height: 50px;
+}
+
+h1 {
+    font-size: 34px;
+    font-weight: 900;        /* Қалың */
+    font-family: 'Trebuchet MS', sans-serif;
+    color: #fff;             /* Ақ түсті қоямыз, фонға жақсы көрінеді */
+    text-transform: uppercase;
+    letter-spacing: 2px;     /* Әріп арасы */
+    flex: 1;
+    text-align: center;
+    margin: 0;
+}
+
+main {
+    padding: 20px;
+    text-align: center;
+}
+
+.card {
+    background: #fff;
+    color: #000;
+    max-width: 500px;
+    margin: 20px auto;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    border: 1px solid #ff6600; /* оранж акцент */
+}
+
+button {
+    background: #ff6600;
+    border: none;
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+button:hover {
+    background: #cc5200;
+}
+
+a {
+    color: #ff6600;
+    text-decoration: none;
+}
+a:hover {
+    text-decoration: underline;
+}
+
+.logout {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 8px 15px;
+    background: #cc0000;
+    color: #fff;
+    border-radius: 5px;
+}
+.logout:hover {
+    background: #990000;
+}

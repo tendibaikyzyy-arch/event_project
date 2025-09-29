@@ -1,0 +1,26 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Kini × Yessenov — Главная</title>
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+</head>
+<body>
+    <header>
+        <div class="logo-container">
+            <img src="{% static 'yessenov.png' %}" alt="Yessenov" class="logo">
+            <h1>Kini × Yessenov</h1>
+            <img src="{% static 'kini.png' %}" alt="Kini" class="logo">
+        </div>
+    </header>
+
+    <main>
+        <div class="card">
+            <h2>Добро пожаловать в Event Management System</h2>
+            <a href="{% url 'login' %}" class="button">Войти</a>
+            <a href="{% url 'register' %}" class="button">Зарегистрироваться</a>
+        </div>
+    </main>
+</body>
+</html>
