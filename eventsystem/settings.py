@@ -1,12 +1,13 @@
 from pathlib import Path
+import os
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'django-insecure-k5fb&#b%tr#eg6)(9^w*g!!h3ry05%uyn00xjav7*q%1(7l*hk'
+SECRET_KEY = 'django-insecure-your-secret-key'   # өз кілтің
 DEBUG = True
+
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'nazeka777.pythonanywhere.com']
 
-# Apps
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -14,7 +15,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'events',   # біздің қосымша
+    'events',   # сенің қосымшаң
 ]
 
 MIDDLEWARE = [
@@ -32,8 +33,8 @@ ROOT_URLCONF = 'eventsystem.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],   # сыртқы templates
-        'APP_DIRS': True,                   # events/templates автоматты қосылады
+        'DIRS': [],
+        'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
@@ -55,29 +56,23 @@ DATABASES = {
 }
 
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
+    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',},
+    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',},
+    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',},
+    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',},
 ]
 
-LANGUAGE_CODE = 'ru'
+LANGUAGE_CODE = 'ru-ru'
 TIME_ZONE = 'Asia/Almaty'
 USE_I18N = True
 USE_TZ = True
 
-# 📌 STATIC SETTINGS
 STATIC_URL = '/static/'
+
 STATICFILES_DIRS = [
-    BASE_DIR / 'events' / 'static'
+    os.path.join(BASE_DIR, "events", "static"),
 ]
+
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

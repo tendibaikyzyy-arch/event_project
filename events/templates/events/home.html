@@ -4,7 +4,91 @@
 <head>
     <meta charset="UTF-8">
     <title>Kini × Yessenov — Главная</title>
-    <link rel="stylesheet" href="{% static 'styles.css' %}">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #ffecd2, #fcb69f, #ffdde1, #c2e9fb);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            margin: 0;
+            padding: 0;
+            color: #000;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        header {
+            background: transparent;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+
+        .logo {
+            height: 50px;
+        }
+
+        h1 {
+            font-size: 34px;
+            font-weight: 900;
+            font-family: 'Trebuchet MS', sans-serif;
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            flex: 1;
+            text-align: center;
+            margin: 0;
+        }
+
+        main {
+            padding: 20px;
+            text-align: center;
+        }
+
+        .card {
+            background: #fff;
+            color: #000;
+            max-width: 500px;
+            margin: 20px auto;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            border: 1px solid #ff6600;
+        }
+
+        .button {
+            display: inline-block;
+            background: #ff6600;
+            color: #fff;
+            padding: 10px 20px;
+            margin: 10px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .button:hover {
+            background: #cc5200;
+        }
+
+        footer {
+            text-align: center;
+            color: #fff;
+            margin: 20px 0;
+        }
+    </style>
 </head>
 <body>
     <header>
@@ -17,10 +101,18 @@
 
     <main>
         <div class="card">
-            <h2>Добро пожаловать в Event Management System</h2>
-            <a href="{% url 'login' %}" class="button">Войти</a>
-            <a href="{% url 'register' %}" class="button">Зарегистрироваться</a>
+            <h2>🎓 Добро пожаловать!</h2>
+            <p>Здесь вы сможете участвовать в мероприятиях и получать 📢 уведомления.</p>
+        </div>
+        <div class="card">
+            <h3>🚪 Начни с авторизации</h3>
+            <a href="{% url 'login' %}" class="button">🔑 Войти</a>
+            <a href="{% url 'register' %}" class="button">📝 Зарегистрироваться</a>
         </div>
     </main>
+
+    <footer>
+        <p>© 2025 Kini × Yessenov</p>
+    </footer>
 </body>
 </html>
