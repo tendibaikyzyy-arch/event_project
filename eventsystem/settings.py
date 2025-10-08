@@ -3,7 +3,7 @@ import os
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'django-insecure-your-secret-key'   # өз кілтің
+SECRET_KEY = 'django-insecure-your-secret-key'   # өзіңдікі болсын
 DEBUG = True
 
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'nazeka777.pythonanywhere.com']
@@ -15,7 +15,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'events',   # сенің қосымшаң
+    'events',
 ]
 
 MIDDLEWARE = [
@@ -56,10 +56,10 @@ DATABASES = {
 }
 
 AUTH_PASSWORD_VALIDATORS = [
-    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',},
-    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',},
-    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',},
-    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',},
+    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
 LANGUAGE_CODE = 'ru-ru'
@@ -67,12 +67,15 @@ TIME_ZONE = 'Asia/Almaty'
 USE_I18N = True
 USE_TZ = True
 
+# --------------- STATIC CONFIG ----------------
 STATIC_URL = '/static/'
 
+# өзіңнің стилдерің мен суреттер тұрған жер:
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "events", "static"),
+    os.path.join(BASE_DIR, "static"),
 ]
 
+# collectstatic жинайтын жер:
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

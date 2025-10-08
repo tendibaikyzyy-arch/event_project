@@ -8,7 +8,6 @@ body {
     color: #000;
 }
 
-/* Анимация (фон қозғалып тұрады) */
 @keyframes gradientBG {
     0% { background-position: 0% 50%; }
     50% { background-position: 100% 50%; }
@@ -16,7 +15,7 @@ body {
 }
 
 header {
-    background: transparent; /* фонсыз, градиент артта көрінеді */
+    background: transparent;
     padding: 20px;
     display: flex;
     justify-content: space-between;
@@ -36,60 +35,78 @@ header {
 
 h1 {
     font-size: 34px;
-    font-weight: 900;        /* Қалың */
+    font-weight: 900;
     font-family: 'Trebuchet MS', sans-serif;
-    color: #fff;             /* Ақ түсті қоямыз, фонға жақсы көрінеді */
+    color: #fff;
     text-transform: uppercase;
-    letter-spacing: 2px;     /* Әріп арасы */
+    letter-spacing: 2px;
     flex: 1;
     text-align: center;
     margin: 0;
 }
 
-main {
-    padding: 20px;
-    text-align: center;
+/* --- Карточки --- */
+.cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin: 40px;
 }
 
 .card {
-    background: #fff;
-    color: #000;
-    max-width: 500px;
-    margin: 20px auto;
-    padding: 25px;
-    border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-    border: 1px solid #ff6600; /* оранж акцент */
+    position: relative;
+    height: 250px;
+    border-radius: 12px;
+    background-size: cover;
+    background-position: center;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-button {
-    background: #ff6600;
-    border: none;
-    color: #fff;
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
+.card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.5);
 }
-button:hover {
+
+.card__overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 20px;
+}
+
+.card__overlay h3 {
+    font-size: 20px;
+    font-weight: bold;
+    margin: 0 0 5px;
+}
+
+.card__overlay p {
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+.card__overlay .button {
+    background: #ff6600;
+    color: #fff;
+    padding: 8px 15px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.card__overlay .button:hover {
     background: #cc5200;
 }
 
-a {
-    color: #ff6600;
-    text-decoration: none;
-}
-a:hover {
-    text-decoration: underline;
-}
-
-.logout {
-    display: inline-block;
-    margin-top: 20px;
-    padding: 8px 15px;
-    background: #cc0000;
+/* --- Подвал --- */
+footer {
+    text-align: center;
     color: #fff;
-    border-radius: 5px;
-}
-.logout:hover {
-    background: #990000;
+    margin: 20px 0;
 }
