@@ -16,15 +16,30 @@
         .logo { height: 50px; }
 
         .banner { width: 100%; height: 300px; overflow: hidden; position: relative; }
-        .slides { display: flex; width: 400%; height: 100%; animation: slide 16s infinite; }
-        .slides img { width: 100%; height: 300px; object-fit: cover; }
-        @keyframes slide {
-            0%{transform: translateX(0%);}20%{transform: translateX(0%);}
-            25%{transform: translateX(-100%);}45%{transform: translateX(-100%);}
-            50%{transform: translateX(-200%);}70%{transform: translateX(-200%);}
-            75%{transform: translateX(-300%);}95%{transform: translateX(-300%);}
-            100%{transform: translateX(0%);}
-        }
+        .slides {
+    display: flex;
+    width: 400%;
+    height: 100%;
+    animation: slide 24s infinite ease-in-out;
+}
+
+@keyframes slide {
+    0%, 20% {
+        transform: translateX(0%);
+    }
+    25%, 45% {
+        transform: translateX(-100%);
+    }
+    50%, 70% {
+        transform: translateX(-200%);
+    }
+    75%, 95% {
+        transform: translateX(-300%);
+    }
+    100% {
+        transform: translateX(0%);
+    }
+}
 
         main { padding: 40px; }
         .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
