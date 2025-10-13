@@ -1,58 +1,142 @@
-{% load static %}
+   {% load static %}
 <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
     <title>Kini × Yessenov — Главная</title>
-    <link rel="stylesheet" href="{% static 'styles.css' %}">
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #f5f5f5; color: #333;}
+        header {
+            background: linear-gradient(135deg, #ffecd2, #fcb69f);
+            padding: 15px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo { height: 50px; }
+
+        .banner { width: 100%; height: 300px; overflow: hidden; position: relative; }
+        .slides { display: flex; width: 400%; height: 100%; animation: slide 16s infinite; }
+        .slides img { width: 100%; height: 300px; object-fit: cover; }
+        @keyframes slide {
+            0%{transform: translateX(0%);}20%{transform: translateX(0%);}
+            25%{transform: translateX(-100%);}45%{transform: translateX(-100%);}
+            50%{transform: translateX(-200%);}70%{transform: translateX(-200%);}
+            75%{transform: translateX(-300%);}95%{transform: translateX(-300%);}
+            100%{transform: translateX(0%);}
+        }
+
+        main { padding: 40px; }
+        .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
+        .card { position: relative; border-radius: 12px; height: 250px; background-size: cover; background-position: center; box-shadow: 0 4px 15px rgba(0,0,0,0.2); overflow: hidden; cursor: pointer; transition: transform 0.3s; }
+        .card:hover { transform: scale(1.03); }
+        .overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.4); color: #fff; display: flex; flex-direction: column; justify-content: flex-end; padding: 20px; }
+        .overlay h3 { margin: 0; font-size: 20px; }
+        .overlay p { margin: 5px 0 0; font-size: 14px; }
+        footer { text-align: center; padding: 15px; background: #333; color: #fff; margin-top: 20px; }
+
+        .btn {
+            display:inline-block; margin-top:10px;
+            background:#ff7f50; color:#fff; border:none;
+            padding:8px 14px; border-radius:8px; font-weight:bold;
+            cursor:pointer; transition:.3s;
+        }
+        .btn:hover { background:#ff5722; }
+
+        .auth-buttons { display: flex; gap: 10px; }
+        .auth-buttons a {
+            background: #ff7f50; color: #fff;
+            padding: 6px 12px; border-radius: 6px;
+            text-decoration: none; font-weight: bold;
+            transition: .3s;
+        }
+        .auth-buttons a:hover { background: #ff5722; }
+    </style>
 </head>
 <body>
+    <!-- 🔹 Шапка -->
     <header>
-        <div class="logo-container">
-            <img src="{% static 'img/yessenov.png' %}" alt="Yessenov" class="logo">
-            <h1>Kini × Yessenov</h1>
-            <img src="{% static 'img/kini.png' %}" alt="Kini" class="logo">
+        <img src="{% static 'img/kini.png' %}" alt="Kini" class="logo">
+
+        <div class="auth-buttons">
+            {% if user.is_authenticated %}
+                <span style="color:white; font-weight:bold;">👋 {{ user.username }}</span>
+                <a href="{% url 'logout' %}">Выйти</a>
+            {% else %}
+                <a href="{% url 'login' %}">Войти</a>
+                <a href="{% url 'signup' %}">Регистрация</a>
+            {% endif %}
         </div>
+
+        <img src="{% static 'img/yessenov.png' %}" alt="Yessenov" class="logo">
     </header>
 
+    <!-- 🔹 Слайдер -->
+    <section class="banner">
+        <div class="slides">
+            <img src="{% static 'img/banner1.png' %}" alt="Banner 1">
+            <img src="{% static 'img/banner2.png' %}" alt="Banner 2">
+            <img src="{% static 'img/banner3.png' %}" alt="Banner 3">
+            <img src="{% static 'img/banner4.png' %}" alt="Banner 4">
+        </div>
+    </section>
+
+    <!-- 🔹 Карточки мероприятий -->
     <main>
-        <section class="cards">
-            <div class="card" style="background-image: url('{% static "img/event1.jpg" %}')">
-                <div class="card__overlay">
-                    <h3>🍁 Осенний бал</h3>
-                    <p>Традиционный студенческий праздник</p>
-                    <a href="#" class="button">Подробнее</a>
+        <div class="cards">
+            <div class="card" style="background-image: url('{% static 'img/event1.jpg' %}')" data-event="1">
+                <div class="overlay">
+                    <h3>Осенний бал 🍁</h3>
+                    <p>Красивый вечер с танцами и музыкой.</p>
+                    <button class="btn">Записаться</button>
+                </div>
+            </div>
+         <div class="card" style="background-image: url('{% static 'img/event2.jpg' %}')" data-event="2">
+                <div class="overlay">
+                    <h3>Хэллоуин 🎃</h3>
+                    <p>Костюмированная вечеринка с конкурсами.</p>
+                    <button class="btn">Записаться</button>
                 </div>
             </div>
 
-            <div class="card" style="background-image: url('{% static "img/event2.jpg" %}')">
-                <div class="card__overlay">
-                    <h3>🎃 Хэллоуин</h3>
-                    <p>Костюмированная вечеринка в университете</p>
-                    <a href="#" class="button">Присоединиться</a>
+            <div class="card" style="background-image: url('{% static 'img/event3.jpg' %}')" data-event="3">
+                <div class="overlay">
+                    <h3>Встреча с деканом 🎓</h3>
+                    <p>Открытый диалог и ответы на вопросы.</p>
+                    <button class="btn">Записаться</button>
                 </div>
             </div>
 
-            <div class="card" style="background-image: url('{% static "img/event3.jpg" %}')">
-                <div class="card__overlay">
-                    <h3>🎓 Встреча с деканом</h3>
-                    <p>Обсуждаем важные вопросы и планы</p>
-                    <a href="#" class="button">Смотреть</a>
+            <div class="card" style="background-image: url('{% static 'img/event4.jpg' %}')" data-event="4">
+                <div class="overlay">
+                    <h3>Кинозал 🎬</h3>
+                    <p>Просмотр фильмов для студентов.</p>
+                    <button class="btn">Записаться</button>
                 </div>
             </div>
-
-            <div class="card" style="background-image: url('{% static "img/event4.jpg" %}')">
-                <div class="card__overlay">
-                    <h3>🎬 Кинозал</h3>
-                    <p>Просмотр фильмов для студентов</p>
-                    <a href="#" class="button">Участвовать</a>
-                </div>
-            </div>
-        </section>
+        </div>
     </main>
 
+    <!-- 🔹 Подвал -->
     <footer>
         <p>© 2025 Kini × Yessenov</p>
     </footer>
+
+    <!-- 🔹 JS логика -->
+    <script>
+        document.querySelectorAll(".card .btn").forEach(btn=>{
+            btn.addEventListener("click", ()=>{
+                const isAuth = "{{ user.is_authenticated|yesno:'1,0' }}" === "1";
+                const eventId = btn.closest(".card").dataset.event;
+
+                if(!isAuth){
+                    alert("Чтобы записаться, пожалуйста войдите или зарегистрируйтесь 🙂");
+                    window.location.href = "{% url 'login' %}?next=/events/"+eventId+"/register/";
+                } else {
+                    window.location.href = "/events/"+eventId+"/register/";
+                }
+            });
+        });
+    </script>
 </body>
-</html>
+</html>     

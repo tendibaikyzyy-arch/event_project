@@ -1,65 +1,81 @@
-{% load static %}
+ {% load static %}
 <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
     <title>Вход — Kini × Yessenov</title>
-    <link rel="stylesheet" href="{% static 'styles.css' %}">
     <style>
         body {
             font-family: Arial, sans-serif;
-            background: linear-gradient(135deg, #ffdde1, #ee9ca7, #c2e9fb);
+            margin:0; padding:0;
+            background: linear-gradient(135deg, #ffecd2, #fcb69f, #ff9a9e, #fad0c4, #a1c4fd, #c2e9fb);
             background-size: 400% 400%;
             animation: gradientBG 12s ease infinite;
-            margin: 0;
-            padding: 0;
-            text-align: center;
+            color:#333;
         }
         @keyframes gradientBG {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+            0%{background-position:0% 50%}
+            50%{background-position:100% 50%}
+            100%{background-position:0% 50%}
         }
-        .card {
-            background: #fff;
-            max-width: 400px;
-            margin: 80px auto;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 8px 16px rgba(0,0,0,0.25);
-        }
-        h2 { margin-bottom: 20px; font-size: 26px; }
-        input {
-            width: 85%;
-            padding: 12px;
-            margin: 10px 0;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-        }
-        button {
-            background: #0077ff;
-            color: white;
-            padding: 12px 20px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-        button:hover {
-            background: #005fcc;
-        }
+
+        header { background: rgba(0,0,0,0.25); padding:15px 40px; display:flex; justify-content:space-between; align-items:center; }
+        .logo { height:50px; }
+
+        main { display:flex; justify-content:center; align-items:center; min-height:70vh; }
+        form { background:white; padding:30px; border-radius:12px; box-shadow:0 4px 15px rgba(0,0,0,0.2); width:320px; }
+        form h2 { margin-top:0; text-align:center; font-size:22px; }
+        label { display:block; margin-top:15px; font-weight:bold; }
+        input { width:100%; padding:10px; margin-top:5px; border:1px solid #ccc; border-radius:6px; }
+        .btn { margin-top:20px; width:100%; background:#ff7f50; color:#fff; border:none; padding:12px; border-radius:8px; font-weight:bold; cursor:pointer; transition:.3s; font-size:16px; }
+        .btn:hover { background:#ff5722; }
+        p { text-align:center; margin-top:15px; }
+        a { color:#ff5722; font-weight:bold; text-decoration:none; }
+
+        /* Сообщения Django */
+        .messages { margin-bottom:15px; }
+        .messages li { list-style:none; padding:10px; border-radius:6px; margin-bottom:10px; font-weight:bold; }
+        .messages .error { background:#ffcccc; color:#900; }
+        .messages .success { background:#ccffcc; color:#060; }
+        .messages .info { background:#cce5ff; color:#004085; }
     </style>
 </head>
 <body>
-    <div class="card">
-        <h2>🔐 Вход</h2>
-        <form method="POST">
+    <!-- 🔹 Шапка -->
+    <header>
+        <img src="{% static 'img/kini.png' %}" alt="Kini" class="logo">
+        <img src="{% static 'img/yessenov.png' %}" alt="Yessenov" class="logo">
+    </header>
+
+    <!-- 🔹 Форма входа -->
+    <main>
+        <form method="post">
             {% csrf_token %}
-            <input type="text" name="username" placeholder="👤 Имя пользователя" required><br>
-            <input type="password" name="password" placeholder="🔑 Пароль" required><br>
-            <button type="submit">➡️ Войти</button>
+            <h2>🔑 Вход в систему</h2>
+
+            <!-- Сообщения Django -->
+            {% if messages %}
+                <ul class="messages">
+                    {% for message in messages %}
+                        <li class="{{ message.tags }}">{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+
+            <label for="username">👤 Логин</label>
+            <input type="text" name="username" id="username" required>
+
+            <label for="password">🔒 Пароль</label>
+            <input type="password" name="password" id="password" required>
+
+            <button type="submit" class="btn">🚀 Войти</button>
+
+            <p>Нет аккаунта? <a href="{% url 'signup' %}">✍️ Регистрация</a></p>
         </form>
-        <p>Нет аккаунта? <a href="{% url 'register' %}">Зарегистрироваться</a></p>
-    </div>
+    </main>
+
+    <footer style="text-align:center; padding:15px; background:rgba(0,0,0,0.6); color:#fff;">
+        © 2025 Kini × Yessenov
+    </footer>
 </body>
 </html>

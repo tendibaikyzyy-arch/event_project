@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required
 
 # Главная страница (только вход и регистрация)
 def home(request):
-    return render(request, 'events/main_home.html')
+    return (request, 'events/home.html')
 
 
 # Регистрация

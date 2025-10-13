@@ -3,7 +3,7 @@ import os
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'django-insecure-your-secret-key'   # өзіңдікі болсын
+SECRET_KEY = '=2$so+o)a)+*)#bei3s+)1gstqht!-!_k(noud)%8tgim8k$7g'   # өзіңдікі болсын
 DEBUG = True
 
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'nazeka777.pythonanywhere.com']
@@ -72,7 +72,7 @@ STATIC_URL = '/static/'
 
 # өзіңнің стилдерің мен суреттер тұрған жер:
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "static"),
+    os.path.join(BASE_DIR, "events" , "static"),
 ]
 
 # collectstatic жинайтын жер:
