@@ -100,17 +100,27 @@
             text-shadow: 0 0 5px rgba(0,0,0,0.5);
         }
 
-        /* 🔹 Жасырылған форма */
         .hidden { display: none; }
 
-        /* 🔹 Анимация */
-        .fade-in {
-            animation: fadein 0.6s ease forwards;
+        /* 🔹 Toast хабарлама */
+        .toast {
+            position: fixed;
+            top: 25px;
+            right: 25px;
+            background: #ff7b54;
+            color: #fff;
+            padding: 12px 18px;
+            border-radius: 8px;
+            font-weight: 500;
+            opacity: 0;
+            transform: translateY(-20px);
+            animation: toastSlide 4s ease forwards;
         }
-
-        @keyframes fadein {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+        @keyframes toastSlide {
+            0% { opacity: 0; transform: translateY(-20px); }
+            10% { opacity: 1; transform: translateY(0); }
+            90% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(-20px); }
         }
     </style>
 </head>
@@ -121,12 +131,13 @@
         <img src="{% static 'img/yessenov.png' %}" alt="Yessenov Logo">
     </div>
 
-    <!-- 🔹 Контейнер -->
+    <!-- 🔹 Вход -->
     <div class="container fade-in" id="loginBox">
         <h2>Войти 👋</h2>
         <form method="POST" action="{% url 'login' %}">
             {% csrf_token %}
-            {{ form.as_p }}
+            <input type="text" name="username" placeholder="Имя пользователя" required>
+            <input type="password" name="password" placeholder="Пароль" required>
             <button type="submit">Войти</button>
         </form>
 
@@ -134,13 +145,15 @@
             Нет аккаунта? <a href="#" onclick="showRegister()">Зарегистрироваться</a>
         </div>
     </div>
-
-    <!-- 🔹 Тіркелу формасы -->
+    <!-- 🔹 Регистрация -->
     <div class="container hidden fade-in" id="registerBox">
         <h2>Регистрация ✨</h2>
         <form method="POST" action="{% url 'signup' %}">
             {% csrf_token %}
-            {{ form.as_p }}
+            <input type="text" name="username" placeholder="Имя пользователя" required>
+            <input type="email" name="email" placeholder="E-mail" required>
+            <input type="password" name="password1" placeholder="Пароль" required>
+            <input type="password" name="password2" placeholder="Повторите пароль" required>
             <button type="submit">Создать аккаунт</button>
         </form>
 
@@ -152,7 +165,7 @@
     <footer>© 2025 Kini × Yessenov | Aktau 🌅</footer>
 
     <script>
-    function showRegister(){
+        function showRegister(){
             document.getElementById("loginBox").classList.add("hidden");
             document.getElementById("registerBox").classList.remove("hidden");
         }
@@ -160,6 +173,17 @@
             document.getElementById("registerBox").classList.add("hidden");
             document.getElementById("loginBox").classList.remove("hidden");
         }
+
+        // Toast хабарламалар
+        {% if messages %}
+        {% for message in messages %}
+        let toast = document.createElement("div");
+        toast.className = "toast";
+        toast.innerText = "{{ message }}";
+        document.body.appendChild(toast);
+        setTimeout(()=>toast.remove(), 4000);
+        {% endfor %}
+        {% endif %}
     </script>
 </body>
 </html>
