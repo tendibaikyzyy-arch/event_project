@@ -1,4 +1,4 @@
- {% load static %}
+{% load static %}
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -102,7 +102,7 @@
 
         .hidden { display: none; }
 
-        /* 🔹 Toast хабарлама */
+        /* Toast хабарлама */
         .toast {
             position: fixed;
             top: 25px;
@@ -116,6 +116,7 @@
             transform: translateY(-20px);
             animation: toastSlide 4s ease forwards;
         }
+
         @keyframes toastSlide {
             0% { opacity: 0; transform: translateY(-20px); }
             10% { opacity: 1; transform: translateY(0); }
@@ -131,8 +132,8 @@
         <img src="{% static 'img/yessenov.png' %}" alt="Yessenov Logo">
     </div>
 
-    <!-- 🔹 Вход -->
-    <div class="container fade-in" id="loginBox">
+    <!-- Вход -->
+    <div class="container" id="loginBox">
         <h2>Войти 👋</h2>
         <form method="POST" action="{% url 'login' %}">
             {% csrf_token %}
@@ -145,8 +146,9 @@
             Нет аккаунта? <a href="#" onclick="showRegister()">Зарегистрироваться</a>
         </div>
     </div>
-    <!-- 🔹 Регистрация -->
-    <div class="container hidden fade-in" id="registerBox">
+
+    <!-- Регистрация -->
+     <div class="container hidden" id="registerBox">
         <h2>Регистрация ✨</h2>
         <form method="POST" action="{% url 'signup' %}">
             {% csrf_token %}
@@ -174,7 +176,6 @@
             document.getElementById("loginBox").classList.remove("hidden");
         }
 
-        // Toast хабарламалар
         {% if messages %}
         {% for message in messages %}
         let toast = document.createElement("div");
