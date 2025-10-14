@@ -3,79 +3,129 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Вход — Kini × Yessenov</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вход | Kini × Yessenov</title>
+
     <style>
         body {
-            font-family: Arial, sans-serif;
-            margin:0; padding:0;
-            background: linear-gradient(135deg, #ffecd2, #fcb69f, #ff9a9e, #fad0c4, #a1c4fd, #c2e9fb);
-            background-size: 400% 400%;
-            animation: gradientBG 12s ease infinite;
-            color:#333;
+            margin: 0;
+            font-family: "Poppins", sans-serif;
+            background: linear-gradient(135deg, rgba(255, 236, 210, 0.8), rgba(252, 182, 159, 0.8)),
+                        url("{% static 'img/banner2.png' %}") center/cover no-repeat;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: #333;
         }
-        @keyframes gradientBG {
-            0%{background-position:0% 50%}
-            50%{background-position:100% 50%}
-            100%{background-position:0% 50%}
+
+        .logos {
+            position: absolute;
+            top: 25px;
+            width: 90%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logos img { height: 50px; }
+
+        .container {
+            background: rgba(255,255,255,0.9);
+            padding: 40px 50px;
+            border-radius: 16px;
+            box-shadow: 0 6px 25px rgba(0,0,0,0.2);
+            width: 350px;
+            text-align: center;
+            backdrop-filter: blur(6px);
         }
 
-        header { background: rgba(0,0,0,0.25); padding:15px 40px; display:flex; justify-content:space-between; align-items:center; }
-        .logo { height:50px; }
+        h2 {
+            margin-bottom: 25px;
+            color: #ff7b54;
+        }
 
-        main { display:flex; justify-content:center; align-items:center; min-height:70vh; }
-        form { background:white; padding:30px; border-radius:12px; box-shadow:0 4px 15px rgba(0,0,0,0.2); width:320px; }
-        form h2 { margin-top:0; text-align:center; font-size:22px; }
-        label { display:block; margin-top:15px; font-weight:bold; }
-        input { width:100%; padding:10px; margin-top:5px; border:1px solid #ccc; border-radius:6px; }
-        .btn { margin-top:20px; width:100%; background:#ff7f50; color:#fff; border:none; padding:12px; border-radius:8px; font-weight:bold; cursor:pointer; transition:.3s; font-size:16px; }
-        .btn:hover { background:#ff5722; }
-        p { text-align:center; margin-top:15px; }
-        a { color:#ff5722; font-weight:bold; text-decoration:none; }
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
 
-        /* Сообщения Django */
-        .messages { margin-bottom:15px; }
-        .messages li { list-style:none; padding:10px; border-radius:6px; margin-bottom:10px; font-weight:bold; }
-        .messages .error { background:#ffcccc; color:#900; }
-        .messages .success { background:#ccffcc; color:#060; }
-        .messages .info { background:#cce5ff; color:#004085; }
+        input {
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            outline: none;
+            font-size: 14px;
+            transition: 0.3s;
+        }
+
+        input:focus {
+            border-color: #ff7b54;
+            box-shadow: 0 0 5px rgba(255, 123, 84, 0.4);
+        }
+
+        button {
+            background: #ff7b54;
+            color: #fff;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 15px;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background: #ff5722;
+        }
+
+        .register-link {
+            margin-top: 10px;
+            font-size: 14px;
+        }
+
+        .register-link a {
+            color: #ff7b54;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .register-link a:hover {
+            text-decoration: underline;
+        }
+
+        footer {
+            position: absolute;
+            bottom: 15px;
+            font-size: 13px;
+            color: #fff;
+            text-shadow: 0 0 5px rgba(0,0,0,0.5);
+        }
     </style>
 </head>
+
 <body>
-    <!-- 🔹 Шапка -->
-    <header>
-        <img src="{% static 'img/kini.png' %}" alt="Kini" class="logo">
-        <img src="{% static 'img/yessenov.png' %}" alt="Yessenov" class="logo">
-    </header>
+    <div class="logos">
+        <img src="{% static 'img/kini.png' %}" alt="Kini Logo">
+        <img src="{% static 'img/yessenov.png' %}" alt="Yessenov Logo">
+    </div>
 
-    <!-- 🔹 Форма входа -->
-    <main>
-        <form method="post">
+    <div class="container">
+        <h2>Добро пожаловать 👋</h2>
+
+        <form method="POST">
             {% csrf_token %}
-            <h2>🔑 Вход в систему</h2>
-
-            <!-- Сообщения Django -->
-            {% if messages %}
-                <ul class="messages">
-                    {% for message in messages %}
-                        <li class="{{ message.tags }}">{{ message }}</li>
-                    {% endfor %}
-                </ul>
-            {% endif %}
-
-            <label for="username">👤 Логин</label>
-            <input type="text" name="username" id="username" required>
-
-            <label for="password">🔒 Пароль</label>
-            <input type="password" name="password" id="password" required>
-
-            <button type="submit" class="btn">🚀 Войти</button>
-
-            <p>Нет аккаунта? <a href="{% url 'signup' %}">✍️ Регистрация</a></p>
+            {{ form.as_p }}
+            <button type="submit">Войти</button>
         </form>
-    </main>
 
-    <footer style="text-align:center; padding:15px; background:rgba(0,0,0,0.6); color:#fff;">
-        © 2025 Kini × Yessenov
-    </footer>
+        <div class="register-link">
+            Нет аккаунта? <a href="{% url 'signup' %}">Регистрация</a>
+        </div>
+    </div>
+
+    <footer>© 2025 Kini × Yessenov | Aktau 🌅</footer>
 </body>
 </html>
