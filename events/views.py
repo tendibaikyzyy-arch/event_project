@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
@@ -10,8 +10,12 @@ def home(request):
 # 🔹 Кіру
 def login_view(request):
     if request.method == 'POST':
-        username = request.POST.get('username')
-        password = request.POST.get('password')
+        username = request.POST.get('username', '').strip()
+        password = request.POST.get('password', '').strip()
+
+        if not username or not password:
+            messages.error(request, "Логин мен пароль енгізіңіз ⚠️")
+            return redirect('login')
 
         user = authenticate(request, username=username, password=password)
         if user is not None:
@@ -20,16 +24,21 @@ def login_view(request):
             return redirect('home')
         else:
             messages.error(request, "Қате логин немесе пароль 😢")
+            return redirect('login')
 
     return render(request, 'events/login.html')
 
 # 🔹 Тіркелу
 def register_view(request):
     if request.method == 'POST':
-        username = request.POST.get('username')
-        email = request.POST.get('email')
-        password1 = request.POST.get('password1')
-        password2 = request.POST.get('password2')
+        username = request.POST.get('username', '').strip()
+        email = request.POST.get('email', '').strip()
+        password1 = request.POST.get('password1', '').strip()
+        password2 = request.POST.get('password2', '').strip()
+
+        if not username or not email or not password1:
+            messages.error(request, "Барлық өрісті толтырыңыз ⚠️")
+            return redirect('signup')
 
         if password1 != password2:
             messages.error(request, "Құпиясөздер сәйкес емес ❌")
