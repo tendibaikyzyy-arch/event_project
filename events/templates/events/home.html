@@ -1,4 +1,4 @@
- {% load static %}
+  {% load static %}
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -45,7 +45,7 @@
             background: #ff5722;
         }
 
-        /* 🔹 Баннер баяу айналу (3 сурет, әрқайсысы 6 сек) */
+        /* 🔹 Баннер баяу айналу (3 сурет, әрқайсысы 9 сек) */
         .banner {
             width: 100%;
             height: 320px;
@@ -55,10 +55,9 @@
 
         .slides {
             display: flex;
-            width: 300%; /* тек 3 сурет */
+            width: 300%;
             height: 100%;
-            animation: slide 18s infinite;
-            transition: transform 1s ease-in-out;
+            animation: slide 30s infinite ease-in-out;
         }
 
         .slides img {
@@ -67,12 +66,12 @@
             object-fit: cover;
         }
 
-        /* әр баннер 6 секунд */
+        /* әр баннер 9 секунд, 1 сек ауысу */
         @keyframes slide {
-            0%, 30% { transform: translateX(0%); }
-            33%, 63% { transform: translateX(-100%); }
-            66%, 96% { transform: translateX(-200%); }
-            100% { transform: translateX(0%); }
+            0%, 28% { transform: translateX(0%); }        /* banner1 */
+            33%, 61% { transform: translateX(-100%); }     /* banner2 */
+            66%, 94% { transform: translateX(-200%); }     /* banner3 */
+            100% { transform: translateX(0%); }            /* цикл басына қайта */
         }
 
         /* 🔹 Карточкалар */
@@ -173,7 +172,7 @@
 
 <body>
     <!-- 🔹 Шапка -->
- <header>
+    <header>
         <img src="{% static 'img/kini.png' %}" alt="KINI Logo">
         <div class="auth-buttons">
             {% if user.is_authenticated %}
@@ -233,7 +232,7 @@
         </div>
     </main>
 
-    <!-- 🔹 Блок о проекте -->
+    <!-- 🔹 О проекте -->
     <section class="about">
         <h2>🌟 О проекте <span>KINI × Yessenov</span></h2>
         <p>
@@ -251,7 +250,7 @@
         <p>© 2025 Kini × Yessenov | Сделано с 💛 в Aktau</p>
     </footer>
 
-    <!-- 🔹 JS логика: кнопка "Записаться" -->
+    <!-- 🔹 JS логика -->
     <script>
         document.querySelectorAll(".card .btn").forEach(btn => {
             btn.addEventListener("click", () => {
@@ -268,4 +267,4 @@
         });
     </script>
 </body>
-</html>    
+</html>
