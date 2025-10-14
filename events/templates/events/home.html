@@ -1,89 +1,207 @@
-   {% load static %}
+ {% load static %}
 <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Kini × Yessenov — Главная</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KINI × Yessenov — Главная</title>
+
     <style>
-        body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #f5f5f5; color: #333;}
+        body {
+            margin: 0;
+            font-family: "Poppins", sans-serif;
+            background: #fffaf6;
+            color: #333;
+        }
+
         header {
             background: linear-gradient(135deg, #ffecd2, #fcb69f);
-            padding: 15px 40px;
+            padding: 20px 40px;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
-        .logo { height: 50px; }
 
-        .banner { width: 100%; height: 300px; overflow: hidden; position: relative; }
+        header .logo {
+            display: flex;
+            align-items: center;
+        }
+
+        header .logo img {
+            height: 45px;
+            margin-right: 10px;
+        }
+
+        header h1 {
+            color: white;
+            font-size: 24px;
+            margin: 0;
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .auth-buttons a {
+            color: #fff;
+            background: #ff7b54;
+            padding: 8px 16px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .auth-buttons a:hover {
+            background: #ff5722;
+        }
+
+        /* 🔹 Баннер баяу айналу */
+        .banner {
+            width: 100%;
+            height: 300px;
+            overflow: hidden;
+            position: relative;
+        }
+
         .slides {
-    display: flex;
-    width: 400%;
-    height: 100%;
-    animation: slide 24s infinite ease-in-out;
-}
+            display: flex;
+            width: 400%;
+            height: 100%;
+            animation: slide 20s infinite;
+            transition: transform 1s ease-in-out;
+        }
 
-@keyframes slide {
-    0%, 20% {
-        transform: translateX(0%);
-    }
-    25%, 45% {
-        transform: translateX(-100%);
-    }
-    50%, 70% {
-        transform: translateX(-200%);
-    }
-    75%, 95% {
-        transform: translateX(-300%);
-    }
-    100% {
-        transform: translateX(0%);
-    }
-}
+        .slides img {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+        }
 
-        main { padding: 40px; }
-        .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
-        .card { position: relative; border-radius: 12px; height: 250px; background-size: cover; background-position: center; box-shadow: 0 4px 15px rgba(0,0,0,0.2); overflow: hidden; cursor: pointer; transition: transform 0.3s; }
-        .card:hover { transform: scale(1.03); }
-        .overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.4); color: #fff; display: flex; flex-direction: column; justify-content: flex-end; padding: 20px; }
-        .overlay h3 { margin: 0; font-size: 20px; }
-        .overlay p { margin: 5px 0 0; font-size: 14px; }
-        footer { text-align: center; padding: 15px; background: #333; color: #fff; margin-top: 20px; }
+        @keyframes slide {
+            0%   { transform: translateX(0%); }
+            20%  { transform: translateX(0%); }
+            25%  { transform: translateX(-100%); }
+            45%  { transform: translateX(-100%); }
+            50%  { transform: translateX(-200%); }
+            70%  { transform: translateX(-200%); }
+            75%  { transform: translateX(-300%); }
+            95%  { transform: translateX(-300%); }
+            100% { transform: translateX(0%); }
+        }
+
+        /* 🔹 Карточкалар */
+        main {
+            padding: 50px;
+            background: #fffaf6;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            position: relative;
+            height: 250px;
+            border-radius: 15px;
+            background-size: cover;
+            background-position: center;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+
+        .card:hover {
+            transform: scale(1.03);
+        }
+
+        .overlay {
+            background: rgba(0,0,0,0.45);
+            color: white;
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            padding: 15px;
+        }
+
+        .overlay h3 {
+            margin: 0;
+            font-size: 18px;
+        }
+
+        .overlay p {
+            font-size: 14px;
+        }
 
         .btn {
-            display:inline-block; margin-top:10px;
-            background:#ff7f50; color:#fff; border:none;
-            padding:8px 14px; border-radius:8px; font-weight:bold;
-            cursor:pointer; transition:.3s;
+            background: #ffbba5;
+            border: none;
+            color: #333;
+            border-radius: 10px;
+            padding: 6px 12px;
+            font-weight: bold;
+            cursor: pointer;
         }
-        .btn:hover { background:#ff5722; }
 
-        .auth-buttons { display: flex; gap: 10px; }
-        .auth-buttons a {
-            background: #ff7f50; color: #fff;
-            padding: 6px 12px; border-radius: 6px;
-            text-decoration: none; font-weight: bold;
-            transition: .3s;
+        .btn:hover {
+            background: #ff9f87;
         }
-        .auth-buttons a:hover { background: #ff5722; }
+
+        /* 🔹 "О проекте" секциясы */
+        .about {
+            text-align: center;
+            background: linear-gradient(135deg, #fff7f0, #ffe6d9);
+            padding: 60px 40px;
+            border-top: 2px solid #ffbca3;
+        }
+
+        .about h2 {
+            font-size: 26px;
+            color: #ff5722;
+            margin-bottom: 15px;
+        }
+
+        .about h2 span {
+            color: #333;
+            font-weight: bold;
+        }
+
+        .about p {
+     max-width: 800px;
+            margin: 10px auto;
+            line-height: 1.6;
+            color: #444;
+            font-size: 16px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            background: linear-gradient(135deg, #ffecd2, #fcb69f);
+            color: #fff;
+            font-size: 14px;
+        }
     </style>
 </head>
-<body>
-    <!-- 🔹 Шапка -->
-    <header>
-        <img src="{% static 'img/kini.png' %}" alt="Kini" class="logo">
 
+<body>
+    <header>
+        <div class="logo">
+            <img src="{% static 'img/kini.png' %}" alt="KINI Logo">
+            <h1>KINI × Yessenov</h1>
+        </div>
         <div class="auth-buttons">
             {% if user.is_authenticated %}
-                <span style="color:white; font-weight:bold;">👋 {{ user.username }}</span>
+                <span style="color:white;">👋 {{ user.username }}</span>
                 <a href="{% url 'logout' %}">Выйти</a>
             {% else %}
                 <a href="{% url 'login' %}">Войти</a>
                 <a href="{% url 'signup' %}">Регистрация</a>
             {% endif %}
         </div>
-
-        <img src="{% static 'img/yessenov.png' %}" alt="Yessenov" class="logo">
     </header>
 
     <!-- 🔹 Слайдер -->
@@ -96,17 +214,18 @@
         </div>
     </section>
 
-    <!-- 🔹 Карточки мероприятий -->
+    <!-- 🔹 Карточкалар -->
     <main>
         <div class="cards">
-            <div class="card" style="background-image: url('{% static 'img/event1.jpg' %}')" data-event="1">
+            <div class="card" style="background-image: url('{% static "img/event1.jpg" %}');">
                 <div class="overlay">
                     <h3>Осенний бал 🍁</h3>
                     <p>Красивый вечер с танцами и музыкой.</p>
                     <button class="btn">Записаться</button>
                 </div>
             </div>
-         <div class="card" style="background-image: url('{% static 'img/event2.jpg' %}')" data-event="2">
+
+            <div class="card" style="background-image: url('{% static "img/event2.jpg" %}');">
                 <div class="overlay">
                     <h3>Хэллоуин 🎃</h3>
                     <p>Костюмированная вечеринка с конкурсами.</p>
@@ -114,7 +233,7 @@
                 </div>
             </div>
 
-            <div class="card" style="background-image: url('{% static 'img/event3.jpg' %}')" data-event="3">
+            <div class="card" style="background-image: url('{% static "img/event3.jpg" %}');">
                 <div class="overlay">
                     <h3>Встреча с деканом 🎓</h3>
                     <p>Открытый диалог и ответы на вопросы.</p>
@@ -122,7 +241,7 @@
                 </div>
             </div>
 
-            <div class="card" style="background-image: url('{% static 'img/event4.jpg' %}')" data-event="4">
+            <div class="card" style="background-image: url('{% static "img/event4.jpg" %}');">
                 <div class="overlay">
                     <h3>Кинозал 🎬</h3>
                     <p>Просмотр фильмов для студентов.</p>
@@ -132,26 +251,22 @@
         </div>
     </main>
 
+    <!-- 🔹 Блок о проекте -->
+    <section class="about">
+        <h2>🌟 О проекте <span>KINI × Yessenov</span></h2>
+        <p>
+            Этот сайт создан студентами <strong>Kazakh-German Institute of Sustainable Engineering</strong> 
+            при поддержке <strong>Yessenov University</strong> для организации и регистрации студенческих мероприятий.
+        </p>
+        <p>
+            Наша цель — сделать студенческую жизнь ярче: танцы, встречи, киновечера и дружеские проекты.  
+            Следи за новостями и участвуй в жизни кампуса 💫
+        </p>
+    </section>
+
     <!-- 🔹 Подвал -->
     <footer>
-        <p>© 2025 Kini × Yessenov</p>
+        <p>© 2025 Kini × Yessenov | Сделано с 💛 в Aktau</p>
     </footer>
-
-    <!-- 🔹 JS логика -->
-    <script>
-        document.querySelectorAll(".card .btn").forEach(btn=>{
-            btn.addEventListener("click", ()=>{
-                const isAuth = "{{ user.is_authenticated|yesno:'1,0' }}" === "1";
-                const eventId = btn.closest(".card").dataset.event;
-
-                if(!isAuth){
-                    alert("Чтобы записаться, пожалуйста войдите или зарегистрируйтесь 🙂");
-                    window.location.href = "{% url 'login' %}?next=/events/"+eventId+"/register/";
-                } else {
-                    window.location.href = "/events/"+eventId+"/register/";
-                }
-            });
-        });
-    </script>
 </body>
-</html>     
+</html>       
