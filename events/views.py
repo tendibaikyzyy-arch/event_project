@@ -1,34 +1,34 @@
- from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 
-# 🔹 Басты бет
+# Главная страница
 def home(request):
     return render(request, 'events/home.html')
 
-# 🔹 Кіру
+# Вход
 def login_view(request):
     if request.method == 'POST':
         username = request.POST.get('username', '').strip()
         password = request.POST.get('password', '').strip()
 
         if not username or not password:
-            messages.error(request, "Логин мен пароль енгізіңіз ⚠️")
+            messages.error(request, "Введите логин и пароль ⚠️")
             return redirect('login')
 
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
-            messages.success(request, f"Қош келдің, {username}! 🌸")
+            messages.success(request, f"Добро пожаловать, {username}! 🎉")
             return redirect('home')
         else:
-            messages.error(request, "Қате логин немесе пароль 😢")
+            messages.error(request, "Неверный логин или пароль 😢")
             return redirect('login')
 
     return render(request, 'events/login.html')
 
-# 🔹 Тіркелу
+# Регистрация
 def register_view(request):
     if request.method == 'POST':
         username = request.POST.get('username', '').strip()
@@ -37,19 +37,19 @@ def register_view(request):
         password2 = request.POST.get('password2', '').strip()
 
         if not username or not email or not password1:
-            messages.error(request, "Барлық өрісті толтырыңыз ⚠️")
+            messages.error(request, "Заполните все поля ⚠️")
             return redirect('signup')
 
         if password1 != password2:
-            messages.error(request, "Құпиясөздер сәйкес емес ❌")
+            messages.error(request, "Пароли не совпадают ❌")
             return redirect('signup')
 
         if User.objects.filter(username=username).exists():
-            messages.error(request, "Бұл логин бос емес ⚠️")
+            messages.error(request, "Такой логин уже существует ⚠️")
             return redirect('signup')
 
         User.objects.create_user(username=username, email=email, password=password1)
-        messages.success(request, "Тіркелу сәтті өтті ✅ Енді кіріңіз!")
+        messages.success(request, "Регистрация прошла успешно ✅ Теперь войдите в систему.")
         return redirect('login')
 
     return render(request, 'events/login.html')
