@@ -4,20 +4,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Вход | Kini × Yessenov</title>
+    <title>KINI × Yessenov | Вход</title>
 
     <style>
         body {
             margin: 0;
             font-family: "Poppins", sans-serif;
-            background: linear-gradient(135deg, rgba(255, 236, 210, 0.8), rgba(252, 182, 159, 0.8)),
-                        url("{% static 'img/banner2.png' %}") center/cover no-repeat;
+            background: linear-gradient(135deg, rgba(255, 236, 210, 0.85), rgba(252, 182, 159, 0.85)),
+                        url("{% static 'img/banner1.png' %}") center/cover no-repeat;
             height: 100vh;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            color: #333;
+            overflow: hidden;
         }
 
         .logos {
@@ -31,24 +31,25 @@
         .logos img { height: 50px; }
 
         .container {
+            width: 360px;
             background: rgba(255,255,255,0.9);
-            padding: 40px 50px;
+            padding: 35px;
             border-radius: 16px;
             box-shadow: 0 6px 25px rgba(0,0,0,0.2);
-            width: 350px;
             text-align: center;
             backdrop-filter: blur(6px);
+            transition: transform 0.6s ease-in-out;
         }
 
         h2 {
-            margin-bottom: 25px;
             color: #ff7b54;
+            margin-bottom: 20px;
         }
 
         form {
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 12px;
         }
 
         input {
@@ -62,39 +63,34 @@
 
         input:focus {
             border-color: #ff7b54;
-            box-shadow: 0 0 5px rgba(255, 123, 84, 0.4);
+            box-shadow: 0 0 6px rgba(255, 123, 84, 0.4);
         }
 
         button {
             background: #ff7b54;
             color: #fff;
             border: none;
-            padding: 12px;
+            padding: 10px;
             border-radius: 8px;
-            cursor: pointer;
             font-weight: bold;
-            font-size: 15px;
+            cursor: pointer;
             transition: 0.3s;
         }
 
-        button:hover {
-            background: #ff5722;
-        }
+        button:hover { background: #ff5722; }
 
-        .register-link {
+        .toggle-link {
             margin-top: 10px;
             font-size: 14px;
         }
 
-        .register-link a {
+        .toggle-link a {
             color: #ff7b54;
             text-decoration: none;
             font-weight: bold;
         }
 
-        .register-link a:hover {
-            text-decoration: underline;
-        }
+        .toggle-link a:hover { text-decoration: underline; }
 
         footer {
             position: absolute;
@@ -102,6 +98,19 @@
             font-size: 13px;
             color: #fff;
             text-shadow: 0 0 5px rgba(0,0,0,0.5);
+        }
+
+        /* 🔹 Жасырылған форма */
+        .hidden { display: none; }
+
+        /* 🔹 Анимация */
+        .fade-in {
+            animation: fadein 0.6s ease forwards;
+        }
+
+        @keyframes fadein {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
@@ -112,20 +121,45 @@
         <img src="{% static 'img/yessenov.png' %}" alt="Yessenov Logo">
     </div>
 
-    <div class="container">
-        <h2>Добро пожаловать 👋</h2>
-
-        <form method="POST">
+    <!-- 🔹 Контейнер -->
+    <div class="container fade-in" id="loginBox">
+        <h2>Войти 👋</h2>
+        <form method="POST" action="{% url 'login' %}">
             {% csrf_token %}
             {{ form.as_p }}
             <button type="submit">Войти</button>
         </form>
 
-        <div class="register-link">
-            Нет аккаунта? <a href="{% url 'signup' %}">Регистрация</a>
+        <div class="toggle-link">
+            Нет аккаунта? <a href="#" onclick="showRegister()">Зарегистрироваться</a>
+        </div>
+    </div>
+
+    <!-- 🔹 Тіркелу формасы -->
+    <div class="container hidden fade-in" id="registerBox">
+        <h2>Регистрация ✨</h2>
+        <form method="POST" action="{% url 'signup' %}">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Создать аккаунт</button>
+        </form>
+
+        <div class="toggle-link">
+            Уже есть аккаунт? <a href="#" onclick="showLogin()">Войти</a>
         </div>
     </div>
 
     <footer>© 2025 Kini × Yessenov | Aktau 🌅</footer>
+
+    <script>
+    function showRegister(){
+            document.getElementById("loginBox").classList.add("hidden");
+            document.getElementById("registerBox").classList.remove("hidden");
+        }
+        function showLogin(){
+            document.getElementById("registerBox").classList.add("hidden");
+            document.getElementById("loginBox").classList.remove("hidden");
+        }
+    </script>
 </body>
 </html>
