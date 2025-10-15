@@ -1,190 +1,132 @@
-{% load static %}
+ {% load static %}
 <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KINI × Yessenov | Вход</title>
-
+    <title>KINI × Yessenov — Вход</title>
     <style>
         body {
             margin: 0;
-            font-family: "Poppins", sans-serif;
-            background: linear-gradient(135deg, rgba(255, 236, 210, 0.85), rgba(252, 182, 159, 0.85)),
-                        url("{% static 'img/banner1.png' %}") center/cover no-repeat;
+            font-family: 'Segoe UI', sans-serif;
+            background: url("{% static 'img/bg.png' %}") no-repeat center center/cover;
             height: 100vh;
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
-            overflow: hidden;
         }
 
-        .logos {
+        /* Полупрозрачный фон */
+        .auth-bg::before {
+            content: "";
             position: absolute;
-            top: 25px;
-            width: 90%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(255, 255, 255, 0.55);
+            backdrop-filter: blur(2px);
+            z-index: -1;
         }
-        .logos img { height: 50px; }
 
-        .container {
-            width: 360px;
-            background: rgba(255,255,255,0.9);
-            padding: 35px;
-            border-radius: 16px;
-            box-shadow: 0 6px 25px rgba(0,0,0,0.2);
+        .auth-box {
+            background: rgba(255, 255, 255, 0.88);
+            padding: 40px;
+            border-radius: 15px;
             text-align: center;
-            backdrop-filter: blur(6px);
-            transition: transform 0.6s ease-in-out;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            width: 320px;
         }
 
-        h2 {
-            color: #ff7b54;
-            margin-bottom: 20px;
+        .auth-box h2 {
+            color: #ff7043;
+            margin-bottom: 25px;
+            font-weight: 600;
         }
 
-        form {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        input {
-            padding: 10px;
+        .auth-box input {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            border: 1px solid #ddd;
             border-radius: 8px;
-            border: 1px solid #ccc;
-            outline: none;
             font-size: 14px;
-            transition: 0.3s;
         }
 
-        input:focus {
-            border-color: #ff7b54;
-            box-shadow: 0 0 6px rgba(255, 123, 84, 0.4);
-        }
-
-        button {
-            background: #ff7b54;
-            color: #fff;
+        .btn {
+            width: 100%;
+            background: linear-gradient(135deg, #ffa27b, #ff7043);
             border: none;
-            padding: 10px;
+            padding: 12px;
             border-radius: 8px;
-            font-weight: bold;
+            color: white;
+            font-size: 16px;
             cursor: pointer;
             transition: 0.3s;
+            margin-top: 10px;
         }
 
-        button:hover { background: #ff5722; }
+        .btn:hover {
+            background: linear-gradient(135deg, #ff8e5a, #ff5722);
+        }
 
-        .toggle-link {
-            margin-top: 10px;
+        p {
+            margin-top: 15px;
             font-size: 14px;
         }
 
-        .toggle-link a {
-            color: #ff7b54;
+        a {
+            color: #ff7043;
             text-decoration: none;
-            font-weight: bold;
+            font-weight: 500;
         }
 
-        .toggle-link a:hover { text-decoration: underline; }
+        a:hover {
+            text-decoration: underline;
+        }
 
         footer {
             position: absolute;
             bottom: 15px;
-            font-size: 13px;
-            color: #fff;
-            text-shadow: 0 0 5px rgba(0,0,0,0.5);
+            width: 100%;
+            text-align: center;
+            font-size: 14px;
+            color: #777;
         }
 
-        .hidden { display: none; }
-
-        /* Toast хабарлама */
-        .toast {
-            position: fixed;
-            top: 25px;
-            right: 25px;
-            background: #ff7b54;
-            color: #fff;
-            padding: 12px 18px;
-            border-radius: 8px;
-            font-weight: 500;
-            opacity: 0;
-            transform: translateY(-20px);
-            animation: toastSlide 4s ease forwards;
+        /* Логотипы */
+        .logos {
+            position: absolute;
+            top: 20px;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 40px;
         }
 
-        @keyframes toastSlide {
-            0% { opacity: 0; transform: translateY(-20px); }
-            10% { opacity: 1; transform: translateY(0); }
-            90% { opacity: 1; transform: translateY(0); }
-            100% { opacity: 0; transform: translateY(-20px); }
+        .logos img {
+            height: 40px;
         }
     </style>
 </head>
+<body class="auth-bg">
 
-<body>
-    <div class="logos">
-        <img src="{% static 'img/kini.png' %}" alt="Kini Logo">
-        <img src="{% static 'img/yessenov.png' %}" alt="Yessenov Logo">
-    </div>
+<div class="logos">
+    <img src="{% static 'img/kini_logo.png' %}" alt="KINI">
+    <img src="{% static 'img/yessenov_logo.png' %}" alt="Yessenov">
+</div>
 
-    <!-- Вход -->
-    <div class="container" id="loginBox">
-        <h2>Войти 👋</h2>
-        <form method="POST" action="{% url 'login' %}">
-            {% csrf_token %}
-            <input type="text" name="username" placeholder="Имя пользователя" required>
-            <input type="password" name="password" placeholder="Пароль" required>
-            <button type="submit">Войти</button>
-        </form>
+<div class="auth-box">
+    <h2>Войти 👋</h2>
+    <form method="POST">
+        {% csrf_token %}
+        <input type="text" name="username" placeholder="Имя пользователя" required>
+        <input type="password" name="password" placeholder="Пароль" required>
+        <button type="submit" class="btn">Войти</button>
+    </form>
+    <p>Нет аккаунта? <a href="{% url 'signup' %}">Зарегистрироваться</a></p>
+</div>
 
-        <div class="toggle-link">
-            Нет аккаунта? <a href="#" onclick="showRegister()">Зарегистрироваться</a>
-        </div>
-    </div>
+<footer>
+    © 2025 Kini × Yessenov | Сделано с 💛 в Aktau
+</footer>
 
-    <!-- Регистрация -->
-     <div class="container hidden" id="registerBox">
-        <h2>Регистрация ✨</h2>
-        <form method="POST" action="{% url 'signup' %}">
-            {% csrf_token %}
-            <input type="text" name="username" placeholder="Имя пользователя" required>
-            <input type="email" name="email" placeholder="E-mail" required>
-            <input type="password" name="password1" placeholder="Пароль" required>
-            <input type="password" name="password2" placeholder="Повторите пароль" required>
-            <button type="submit">Создать аккаунт</button>
-        </form>
-
-        <div class="toggle-link">
-            Уже есть аккаунт? <a href="#" onclick="showLogin()">Войти</a>
-        </div>
-    </div>
-
-    <footer>© 2025 Kini × Yessenov | Aktau 🌅</footer>
-
-    <script>
-        function showRegister(){
-            document.getElementById("loginBox").classList.add("hidden");
-            document.getElementById("registerBox").classList.remove("hidden");
-        }
-        function showLogin(){
-            document.getElementById("registerBox").classList.add("hidden");
-            document.getElementById("loginBox").classList.remove("hidden");
-        }
-
-        {% if messages %}
-        {% for message in messages %}
-        let toast = document.createElement("div");
-        toast.className = "toast";
-        toast.innerText = "{{ message }}";
-        document.body.appendChild(toast);
-        setTimeout(()=>toast.remove(), 4000);
-        {% endfor %}
-        {% endif %}
-    </script>
 </body>
 </html>

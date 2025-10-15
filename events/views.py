@@ -10,8 +10,8 @@ def home(request):
 # Вход
 def login_view(request):
     if request.method == 'POST':
-        username = request.POST.get('username', '').strip()
-        password = request.POST.get('password', '').strip()
+        username = request.POST.get('username', '')
+        password = request.POST.get('password', '')
 
         if not username or not password:
             messages.error(request, "Введите логин и пароль ⚠️")
@@ -31,12 +31,12 @@ def login_view(request):
 # Регистрация
 def register_view(request):
     if request.method == 'POST':
-        username = request.POST.get('username', '').strip()
-        email = request.POST.get('email', '').strip()
-        password1 = request.POST.get('password1', '').strip()
-        password2 = request.POST.get('password2', '').strip()
+        username = request.POST.get('username', '')
+        email = request.POST.get('email', '')
+        password1 = request.POST.get('password1', '')
+        password2 = request.POST.get('password2', '')
 
-        if not username or not email or not password1:
+        if not username or not email or not password1 or not password2:
             messages.error(request, "Заполните все поля ⚠️")
             return redirect('signup')
 
@@ -52,4 +52,4 @@ def register_view(request):
         messages.success(request, "Регистрация прошла успешно ✅ Теперь войдите в систему.")
         return redirect('login')
 
-    return render(request, 'events/login.html')
+    return render(request, 'events/register.html')
