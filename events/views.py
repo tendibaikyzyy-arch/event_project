@@ -21,7 +21,7 @@ def login_view(request):
         if user is not None:
             login(request, user)
             messages.success(request, f'Добро пожаловать, {username}!')
-            return redirect('home')
+            return redirect('dashboard')
         else:
             messages.error(request, 'Неверное имя пользователя или пароль.')
     return render(request, 'events/login.html')
@@ -84,3 +84,40 @@ def register_for_event(request, event_id):
         Registration.objects.create(event=event, user=request.user)
         messages.success(request, 'Вы успешно зарегистрировались!')
     return redirect('events_list')
+
+
+@login_required
+def dashboard(request):
+    """
+    Личный кабинет с календарём.
+    Сначала пытаемся взять события из БД (Event),
+    если модели/данных нет — показываем примеры.
+    """
+    import json
+    import datetime
+
+    events_payload = []
+    try:
+        from .models import Event
+        qs = Event.objects.order_by('date')[:200]
+        for e in qs:
+            t = getattr(e, 'time', None) or datetime.time(18, 0)
+            start_iso = datetime.datetime.combine(e.date, t).isoformat()
+            events_payload.append({
+                "id": e.id,
+                "title": e.title,
+                "start": start_iso,
+                "extendedProps": {"place": getattr(e, 'place', '')},
+            })
+    except Exception:
+        # Демонстрационные события (если модели ещё нет)
+        events_payload = [
+            {"id": 1, "title": "Осенний бал", "start": "2025-10-16T18:00:00", "extendedProps":{"place":"Актовый зал"}},
+            {"id": 2, "title": "Хэллоуин", "start": "2025-10-31T19:00:00", "extendedProps":{"place":"Студклуб"}},
+            {"id": 3, "title": "Встреча с деканом", "start": "2025-10-20T15:00:00", "extendedProps":{"place":"Актовый зал"}},
+            {"id": 4, "title": "Кинозал", "start": "2025-10-22T20:00:00", "extendedProps":{"place":"Кинозал"}},
+        ]
+
+    return render(request, "events/dashboard.html", {
+        "events_json": json.dumps(events_payload, ensure_ascii=False)
+    })
