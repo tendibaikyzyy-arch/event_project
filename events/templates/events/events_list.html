@@ -1,0 +1,46 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Список мероприятий</title>
+<style>
+body {
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(135deg, #fff7f0, #ffe6d9);
+  padding: 50px;
+}
+.event {
+  background: white;
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+h2 { color: #ff5722; }
+button {
+  background: #ff5722; border: none; color: white;
+  padding: 8px 15px; border-radius: 8px;
+  cursor: pointer;
+}
+a { text-decoration: none; }
+</style>
+</head>
+<body>
+<h2>Список мероприятий</h2>
+{% for event in events %}
+  <div class="event">
+    <h3>{{ event.title }}</h3>
+    <p>{{ event.description }}</p>
+    <p>📅 {{ event.date }} ⏰ {{ event.time }}</p>
+    <p>📍 {{ event.place }}</p>
+    <p>👥 Мест: {{ event.capacity }}</p>
+    <a href="{% url 'register_for_event' event.id %}">
+      <button>Записаться</button>
+    </a>
+  </div>
+{% empty %}
+  <p>Пока нет мероприятий.</p>
+{% endfor %}
+</body>
+</html>
