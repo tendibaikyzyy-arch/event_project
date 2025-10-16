@@ -2,195 +2,161 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8" />
-  <title>Личный кабинет — Календарь</title>
+<meta charset="UTF-8">
+<title>🎓 Кабинет — Kini × Yessenov</title>
+<style>
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background: linear-gradient(135deg, #ffecd2, #fcb69f);
+  margin: 0;
+  padding: 0;
+  color: #333;
+  animation: fadeIn 1s ease-in-out;
+}
+@keyframes fadeIn { from {opacity: 0;} to {opacity: 1;} }
 
-  <!-- FullCalendar -->
-  <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/locales-all.global.min.js"></script>
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(255,255,255,0.8);
+  padding: 15px 40px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  animation: slideDown 0.8s ease;
+}
+@keyframes slideDown { from {transform: translateY(-50px);opacity:0;} to {transform: translateY(0);opacity:1;} }
+.logo { height: 55px; }
 
-  <style>
-    /* Нежный фон */
-    body {
-      margin: 0; font-family: system-ui, Arial, sans-serif; color:#263238;
-      background: linear-gradient(135deg,#fff7f0 0%, #ffe6d9 40%, #ffd7cc 100%);
-      min-height: 100vh;
-    }
+.top-nav {
+  display: flex;
+  justify-content: center;
+  gap: 25px;
+  background: linear-gradient(90deg, #fcb69f, #ffecd2);
+  padding: 12px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+}
+.top-nav a {
+  text-decoration: none;
+  color: #fff;
+  background: #ff7f50;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-weight: bold;
+  transition: 0.3s;
+}
+.top-nav a:hover { background: #ff5722; }
 
-    /* Хедер с логотипами */
-    header {
-      display:flex; justify-content:space-between; align-items:center;
-      padding:14px 24px; backdrop-filter: blur(4px);
-      background: rgba(255,255,255,.6); border-bottom:1px solid #ffd0bf;
-      position: sticky; top:0; z-index: 10;
-    }
-    .logo { height:40px; }
-    .hello { font-weight:600; color:#e65100; }
+h1 {
+  text-align: center;
+  margin-top: 25px;
+  animation: fadeIn 1.2s ease-in-out;
+}
 
-    /* Основная сетка */
-    .wrap {
-      display:grid; grid-template-columns: 280px 1fr; gap:22px;
-      padding: 22px; max-width: 1200px; margin: 0 auto;
-    }
+.dashboard {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 40px;
+  margin-top: 40px;
+  flex-wrap: wrap;
+}
 
-    /* Левая колонка: мини-календарь + кнопка */
-    .aside {
-      background: rgba(255,255,255,.75);
-      border: 1px solid #ffd0bf; border-radius: 14px;
-      padding: 16px; box-shadow: 0 6px 18px rgba(0,0,0,.05);
-      height: fit-content;
-    }
-    .aside h3 { margin: 0 0 10px; font-size: 18px; color:#37474f; }
+.calendar, .event-card {
+  opacity: 0;
+  animation: appear 1.5s forwards;
+}
+@keyframes appear {
+  from { opacity: 0; transform: translateY(40px); }
+  to { opacity: 1; transform: translateY(0); }
+}
 
-    .btn-primary {
-      width:100%; margin-top:12px;
-      background:#ff7f50; color:#fff; font-weight:700;
-      border:none; padding:10px 14px; border-radius:10px; cursor:pointer;
-      transition:.25s;
-    }
-    .btn-primary:hover { background:#ff5f2e; transform: translateY(-1px); }
+.calendar {
+  background: #fff;
+  border-radius: 15px;
+  padding: 20px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  text-align: center;
+  width: 280px;
+}
+.calendar h2 { color: #ff5722; margin-bottom: 15px; }
+input[type="date"] {
+  padding: 8px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
 
-    /* Правая колонка: большой календарь */
-    .panel {
-      background: rgba(255,255,255,.88);
-      border: 1px solid #ffd0bf; border-radius: 14px;
-      padding: 16px; box-shadow: 0 8px 22px rgba(0,0,0,.06);
-    }
-    .panel h2 { margin: 0 0 12px; font-size: 22px; color:#263238; }
+.event-card {
+  background: rgba(255,255,255,0.95);
+  width: 440px;
+  padding: 25px;
+  border-radius: 15px;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+  transition: transform 0.3s;
+}
+.event-card:hover { transform: scale(1.02); }
+.event-card h3 { color: #ff5722; margin-bottom: 10px; }
+.event-card p { line-height: 1.5; }
 
-    /* Модалка бронирования (пока клиентская) */
-    .modal-backdrop {
-      position:fixed; inset:0; background:rgba(0,0,0,.35);
-      display:none; align-items:center; justify-content:center; z-index: 1000;
-    }
-    .modal {
-      width: min(520px, 92vw);
-      background:#fff; border-radius:16px; padding:18px;
-      border:1px solid #ffd0bf; box-shadow:0 12px 28px rgba(0,0,0,.25);
-    }
-    .modal h3{ margin:0 0 12px; }
-    .form-grid { display:grid; gap:10px; }
-    .form-grid input, .form-grid textarea {
-      width:100%; padding:10px 12px; border-radius:10px; border:1px solid #ffd0bf;
-      outline:none; font: inherit;
-    }
-    .modal-actions { display:flex; gap:10px; justify-content:flex-end; margin-top:10px;}
-    .btn-secondary { background:#eceff1; border:none; padding:10px 14px; border-radius:10px; cursor:pointer;}
-    .btn-accent { background:#ff7f50; color:#fff; border:none; padding:10px 14px; border-radius:10px; cursor:pointer;}
+.btn {
+  display: inline-block;
+  margin-top: 15px;
+  background: #ff7f50;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+}
+.btn:hover { background: #ff5722; }
 
-    /* Полировка FullCalendar */
-    .fc .fc-toolbar-title{ font-size:18px; }
-    .fc .fc-button-primary{
-      background:#ff7f50; border-color:#ff7f50;
-    }
-    .fc .fc-button-primary:not(:disabled):hover{
-      background:#ff5f2e; border-color:#ff5f2e;
-    }
-  </style>
+footer {
+  text-align: center;
+  padding: 20px;
+  color: #fff;
+  background: #333;
+  margin-top: 60px;
+}
+</style>
 </head>
 <body>
 
-  <!-- Шапка -->
-  <header>
-    <img src="{% static 'img/kini.png' %}" alt="KINI" class="logo">
-    <div class="hello">Календарь мероприятий</div>
-    <img src="{% static 'img/yessenov.png' %}" alt="Yessenov" class="logo">
-  </header>
+<header>
+  <img src="{% static 'img/kini.png' %}" class="logo" alt="Kini">
+  <h2>Kini × Yessenov</h2>
+  <img src="{% static 'img/yessenov.png' %}" class="logo" alt="Yessenov">
+</header>
 
-  <!-- Контент -->
-  <div class="wrap">
-    <!-- Левая колонка -->
-    <aside class="aside">
-      <h3>Календарь</h3>
-      <div id="miniCalendar"></div>
-      <button class="btn-primary" id="btnBook">+ Забронировать</button>
-    </aside>
+<div class="top-nav">
+  <a href="{% url 'my_events' %}">🎟 Мои записи</a>
+  <a href="{% url 'notifications' %}">🔔 Уведомления</a>
+  <a href="{% url 'home' %}">🏠 На главную</a>
+</div>
 
-    <!-- Правая колонка -->
-    <section class="panel">
-      <h2>Месяц</h2>
-      <div id="mainCalendar"></div>
-    </section>
+<h1>Добро пожаловать, {{ user.username }}! 🌟</h1>
+
+<section class="dashboard">
+  <div class="calendar">
+    <h2>📅 Календарь</h2>
+    <input type="date" id="eventDate">
+    <p style="margin-top: 10px;">Выберите дату мероприятия</p>
   </div>
 
-  <!-- Модальное окно “Бронирование” -->
-  <div class="modal-backdrop" id="bookModal">
-    <div class="modal">
-<h3>Новое мероприятие</h3>
-      <form class="form-grid" id="bookForm" method="post" action="{% url 'event_create' %}">
-        {% csrf_token %}
-        <input type="text" name="title" placeholder="Название" required>
-        <input type="date" name="date" id="formDate" required>
-        <input type="time" name="time" value="18:00" required>
-        <input type="text" name="place" placeholder="Место (аудитория/зал)" required>
-        <textarea name="description" rows="3" placeholder="Короткое описание"></textarea>
-        <div class="modal-actions">
-          <button type="button" class="btn-secondary" id="btnCancel">Отмена</button>
-          <button type="submit" class="btn-accent">Создать</button>
-        </div>
-      </form>
-    </div>
+  <div class="event-card">
+    <h3>Осенний бал 🍁</h3>
+    <p><strong>Дата:</strong> 25 октября</p>
+    <p><strong>Время:</strong> 18:00</p>
+    <p><strong>Место:</strong> Актовый зал Yessenov University</p>
+    <p>Приглашаем всех студентов на красивый вечер с музыкой, танцами и атмосферой осени.</p>
+    <button class="btn">Записаться</button>
   </div>
+</section>
 
-  <script>
-    // Данные событий с бэкенда (если нет — во views мы дадим пример)
-    const EVENTS = JSON.parse('{{ events_json|default:"[]"|escapejs }}');
+<footer>
+  <p>© 2025 Kini × Yessenov | Event Management System</p>
+</footer>
 
-    // Основной календарь
-    const mainEl = document.getElementById('mainCalendar');
-    const calendar = new FullCalendar.Calendar(mainEl, {
-      locale: 'ru',
-      initialView: 'dayGridMonth',
-      height: 'auto',
-      headerToolbar: {
-        left: 'prev,next today',
-        center: 'title',
-        right: 'dayGridMonth,timeGridWeek,timeGridDay'
-      },
-      events: EVENTS, // [{ id, title, start, extendedProps:{place} }, ...]
-      eventClick(info){
-        const place = info.event.extendedProps?.place || '—';
-        alert(`«${info.event.title}»\nДата: ${info.event.start.toLocaleString('ru-RU')}\nМесто: ${place}`);
-      }
-    });
-    calendar.render();
-
-    // Мини-календарь (только даты, без событий)
-    const miniEl = document.getElementById('miniCalendar');
-    const mini = new FullCalendar.Calendar(miniEl, {
-      locale: 'ru',
-      height: 'auto',
-      headerToolbar: { left:'', center:'title', right:'' },
-      initialView: 'dayGridMonth',
-      selectable: true,
-      dateClick(info) {
-        // Перейти на выбранную дату в большом календаре:
-        calendar.gotoDate(info.date);
-      }
-    });
-    mini.render();
-
-    // Модалка бронирования (простая, без JS-фреймворков)
-    const modal = document.getElementById('bookModal');
-    const btnBook = document.getElementById('btnBook');
-    const btnCancel = document.getElementById('btnCancel');
-    const formDate = document.getElementById('formDate');
-
-    btnBook.addEventListener('click', () => {
-      // Подставим выделенную дату из mini, если есть
-      const d = mini.getDate(); // текущая дата мини-календаря
-      // Приведем к yyyy-mm-dd:
-      const iso = new Date(d.getTime() - d.getTimezoneOffset()*60000).toISOString().slice(0,10);
-      formDate.value = iso;
-      modal.style.display = 'flex';
-    });
-    btnCancel.addEventListener('click', () => {
-      modal.style.display = 'none';
-    });
-    modal.addEventListener('click', (e)=>{
-      if (e.target === modal) modal.style.display = 'none';
-    });
-  </script>
 </body>
 </html>

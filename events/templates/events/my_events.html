@@ -1,0 +1,95 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>🎟 Мои записи — Kini × Yessenov</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #fff7f0, #ffe6d9);
+            margin: 0; padding: 0;
+            color: #333;
+        }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255,255,255,0.9);
+            padding: 15px 40px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .logo { height: 50px; }
+
+        .top-nav {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            background: linear-gradient(90deg, #fcb69f, #ffecd2);
+            padding: 12px;
+        }
+        .top-nav a {
+            text-decoration: none;
+            color: #fff;
+            background: #ff7f50;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+        .top-nav a:hover { background: #ff5722; }
+
+        h1 { text-align: center; margin-top: 30px; color: #333; }
+
+        .event-list {
+            max-width: 700px;
+            margin: 30px auto;
+            background: rgba(255,255,255,0.95);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .event {
+            border-bottom: 1px solid #ddd;
+            padding: 10px 0;
+        }
+
+        .event:last-child { border-bottom: none; }
+        .event h3 { color: #ff5722; margin: 5px 0; }
+        .event p { margin: 3px 0; }
+    </style>
+</head>
+<body>
+
+<header>
+    <img src="{% static 'img/kini.png' %}" class="logo">
+    <h2>Kini × Yessenov</h2>
+    <img src="{% static 'img/yessenov.png' %}" class="logo">
+</header>
+
+<div class="top-nav">
+    <a href="{% url 'dashboard' %}">🏠 Кабинет</a>
+    <a href="{% url 'notifications' %}">🔔 Уведомления</a>
+</div>
+
+<h1>🎟 Мои записи</h1>
+
+<div class="event-list">
+    <div class="event">
+        <h3>Осенний бал 🍁</h3>
+        <p><strong>Дата:</strong> 25 октября</p>
+        <p><strong>Время:</strong> 18:00</p>
+        <p><strong>Статус:</strong> Вы зарегистрированы ✅</p>
+    </div>
+
+    <div class="event">
+        <h3>Кинопоказ 🎬</h3>
+        <p><strong>Дата:</strong> 30 октября</p>
+        <p><strong>Время:</strong> 20:00</p>
+        <p><strong>Статус:</strong> Места подтверждены 🎟</p>
+    </div>
+</div>
+
+</body>
+</html>
