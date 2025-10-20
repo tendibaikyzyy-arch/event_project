@@ -2,89 +2,55 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <title>🔔 Уведомления — Kini × Yessenov</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', sans-serif;
-            background: linear-gradient(135deg, #fdfbfb, #ebedee);
-            margin: 0; padding: 0;
-            color: #333;
-        }
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: rgba(255,255,255,0.9);
-            padding: 15px 40px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        .logo { height: 50px; }
-
-        .top-nav {
-            display: flex;
-            justify-content: center;
-            gap: 25px;
-            background: linear-gradient(90deg, #fcb69f, #ffecd2);
-            padding: 12px;
-        }
-        .top-nav a {
-            text-decoration: none;
-            color: #fff;
-            background: #ff7f50;
-            padding: 8px 16px;
-            border-radius: 8px;
-            font-weight: bold;
-            transition: 0.3s;
-        }
-        .top-nav a:hover { background: #ff5722; }
-
-        h1 { text-align: center; margin-top: 30px; color: #333; }
-
-        .notifications {
-            max-width: 700px;
-            margin: 30px auto;
-            background: rgba(255,255,255,0.95);
-            border-radius: 15px;
-            padding: 20px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-        }
-
-        .note {
-            border-bottom: 1px solid #ddd;
-            padding: 10px 0;
-        }
-        .note:last-child { border-bottom: none; }
-        .note h3 { color: #ff5722; margin: 5px 0; }
-        .note p { margin: 3px 0; }
-    </style>
+<meta charset="UTF-8">
+<title>Уведомления</title>
+<style>
+body {
+    font-family: "Inter", sans-serif;
+    background: linear-gradient(135deg, #fff7f0, #fce2d3, #f8e6ff);
+    margin: 0;
+    padding: 0;
+}
+h1 {
+    color: #ff5722;
+    text-align: center;
+    margin: 30px 0;
+}
+.container {
+    width: 80%;
+    margin: auto;
+    background: white;
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+.note {
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+}
+.note.reminder { background: #fff4d6; }
+.note.info { background: #d6f5ff; }
+.note.warning { background: #ffe0e0; }
+a.back {
+    display: inline-block;
+    margin: 10px 0 0 40px;
+    color: #ff784e;
+    text-decoration: none;
+}
+</style>
 </head>
 <body>
 
-<header>
-    <img src="{% static 'img/kini.png' %}" class="logo">
-    <h2>Kini × Yessenov</h2>
-    <img src="{% static 'img/yessenov.png' %}" class="logo">
-</header>
-
-<div class="top-nav">
-    <a href="{% url 'dashboard' %}">🏠 Кабинет</a>
-    <a href="{% url 'my_events' %}">🎟 Мои записи</a>
+<h1>Уведомления</h1>
+<div class="container">
+    {% for n in notifications %}
+        <div class="note {{ n.type }}">
+            {{ n.text }}
+        </div>
+    {% endfor %}
 </div>
 
-<h1>🔔 Уведомления</h1>
-
-<div class="notifications">
-    <div class="note">
-        <h3>Напоминание 📅</h3>
-        <p>Осенний бал состоится уже завтра в 18:00! 💃🕺</p>
-    </div>
-
-    <div class="note">
-        <h3>Изменение ⚠️</h3>
-        <p>Кинопоказ перенесен на 30 октября, 20:00. 🍿</p>
-    </div>
-</div>
-
+<a href="/dashboard/" class="back">← Назад к календарю</a>
 </body>
 </html>
