@@ -110,7 +110,7 @@
             <img src="{% static 'img/yessenov.png' %}" alt="Yessenov">
         </div>
         <h2>Вход в аккаунт</h2>
-        <form method="POST">
+        <form method="POST"> action="">
             {% csrf_token %}
             <input type="text" name="username" placeholder="Имя пользователя" required>
             <input type="password" name="password" placeholder="Пароль" required>
