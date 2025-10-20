@@ -1,162 +1,217 @@
-{% load static %}
+ {% load static %}
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8">
-<title>🎓 Кабинет — Kini × Yessenov</title>
-<style>
-body {
-  font-family: 'Segoe UI', sans-serif;
-  background: linear-gradient(135deg, #ffecd2, #fcb69f);
-  margin: 0;
-  padding: 0;
-  color: #333;
-  animation: fadeIn 1s ease-in-out;
-}
-@keyframes fadeIn { from {opacity: 0;} to {opacity: 1;} }
+    <meta charset="UTF-8">
+    <title>KINI × Yessenov — Календарь мероприятий</title>
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
 
-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: rgba(255,255,255,0.8);
-  padding: 15px 40px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-  animation: slideDown 0.8s ease;
-}
-@keyframes slideDown { from {transform: translateY(-50px);opacity:0;} to {transform: translateY(0);opacity:1;} }
-.logo { height: 55px; }
+    <style>
+        body {
+            font-family: "Inter", sans-serif;
+            background: linear-gradient(135deg, #fff7f0, #fce2d3, #f8e6ff);
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
 
-.top-nav {
-  display: flex;
-  justify-content: center;
-  gap: 25px;
-  background: linear-gradient(90deg, #fcb69f, #ffecd2);
-  padding: 12px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.15);
-}
-.top-nav a {
-  text-decoration: none;
-  color: #fff;
-  background: #ff7f50;
-  padding: 8px 16px;
-  border-radius: 8px;
-  font-weight: bold;
-  transition: 0.3s;
-}
-.top-nav a:hover { background: #ff5722; }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 40px;
+            background: rgba(255,255,255,0.8);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
 
-h1 {
-  text-align: center;
-  margin-top: 25px;
-  animation: fadeIn 1.2s ease-in-out;
-}
+        header img {
+            height: 50px;
+        }
 
-.dashboard {
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  gap: 40px;
-  margin-top: 40px;
-  flex-wrap: wrap;
-}
+        h1 {
+            font-size: 24px;
+            color: #ff5722;
+        }
 
-.calendar, .event-card {
-  opacity: 0;
-  animation: appear 1.5s forwards;
-}
-@keyframes appear {
-  from { opacity: 0; transform: translateY(40px); }
-  to { opacity: 1; transform: translateY(0); }
-}
+        .container {
+            display: flex;
+            padding: 40px;
+            gap: 40px;
+        }
 
-.calendar {
-  background: #fff;
-  border-radius: 15px;
-  padding: 20px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-  text-align: center;
-  width: 280px;
-}
-.calendar h2 { color: #ff5722; margin-bottom: 15px; }
-input[type="date"] {
-  padding: 8px;
-  font-size: 16px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-}
+        /* Левая колонка */
+        .mini-calendar {
+            width: 280px;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            padding: 20px;
+        }
 
-.event-card {
-  background: rgba(255,255,255,0.95);
-  width: 440px;
-  padding: 25px;
-  border-radius: 15px;
-  box-shadow: 0 6px 12px rgba(0,0,0,0.2);
-  transition: transform 0.3s;
-}
-.event-card:hover { transform: scale(1.02); }
-.event-card h3 { color: #ff5722; margin-bottom: 10px; }
-.event-card p { line-height: 1.5; }
+        .mini-calendar h2 {
+            color: #ff5722;
+            text-align: center;
+            margin-bottom: 10px;
+        }
 
-.btn {
-  display: inline-block;
-  margin-top: 15px;
-  background: #ff7f50;
-  color: #fff;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 8px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: 0.3s;
-}
-.btn:hover { background: #ff5722; }
+        /* Большой календарь */
+        #calendar {
+            flex: 1;
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 20px;
+        }
 
-footer {
-  text-align: center;
-  padding: 20px;
-  color: #fff;
-  background: #333;
-  margin-top: 60px;
-}
-</style>
+        .btn {
+            background: #ff784e;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 15px;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: 0.3s;
+            width: 100%;
+        }
+
+        .btn:hover {
+            background: #ff5722;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #777;
+            background: rgba(255,255,255,0.7);
+            border-top: 1px solid #ffd4be;
+        }
+
+        /* Модальное окно */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            width: 400px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+
+        .modal-content h3 {
+            color: #ff5722;
+            margin-bottom: 10px;
+        }
+
+        .close-btn {
+            background: #ccc;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+
+        .register-btn {
+            background: #ff784e;
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        .register-btn:hover {
+            background: #ff5722;
+        }
+    </style>
 </head>
+
 <body>
 
 <header>
-  <img src="{% static 'img/kini.png' %}" class="logo" alt="Kini">
-  <h2>Kini × Yessenov</h2>
-  <img src="{% static 'img/yessenov.png' %}" class="logo" alt="Yessenov">
+    <img src="{% static 'img/kini.png' %}" alt="Kini Logo">
+    <h1>Календарь мероприятий</h1>
+    <img src="{% static 'img/yessenov.png' %}" alt="Yessenov Logo">
 </header>
 
-<div class="top-nav">
-  <a href="{% url 'my_events' %}">🎟 Мои записи</a>
-  <a href="{% url 'notifications' %}">🔔 Уведомления</a>
-  <a href="{% url 'home' %}">🏠 На главную</a>
+<div class="container">
+
+   <!-- Левая панель -->
+<div class="mini-calendar">
+    <h2>Меню</h2>
+    <button class="btn" onclick="window.location.href='/create/'">+ Создать мероприятие</button>
+    <button class="btn" onclick="window.location.href='/events-list/'">📅 Все мероприятия</button>
+    <button class="btn" onclick="window.location.href='/my-events/'">⭐ Мои регистрации</button>
+    <button class="btn" onclick="window.location.href='/notifications/'">🔔 Уведомления</button>
+    <button class="btn" onclick="window.location.href='/logout/'">🚪 Выйти</button>
 </div>
 
-<h1>Добро пожаловать, {{ user.username }}! 🌟</h1>
+<!-- Календарь -->
+    <div id="calendar"></div>
+</div>
 
-<section class="dashboard">
-  <div class="calendar">
-    <h2>📅 Календарь</h2>
-    <input type="date" id="eventDate">
-    <p style="margin-top: 10px;">Выберите дату мероприятия</p>
-  </div>
+<footer>© 2025 KINI × Yessenov | Создано в Актау с 💛</footer>
 
-  <div class="event-card">
-    <h3>Осенний бал 🍁</h3>
-    <p><strong>Дата:</strong> 25 октября</p>
-    <p><strong>Время:</strong> 18:00</p>
-    <p><strong>Место:</strong> Актовый зал Yessenov University</p>
-    <p>Приглашаем всех студентов на красивый вечер с музыкой, танцами и атмосферой осени.</p>
-    <button class="btn">Записаться</button>
-  </div>
-</section>
+<!-- Модальное окно -->
+<div class="modal" id="eventModal">
+    <div class="modal-content">
+        <h3 id="modalTitle"></h3>
+        <p><strong>Место:</strong> <span id="modalPlace"></span></p>
+        <p><strong>Дата:</strong> <span id="modalDate"></span></p>
+        <div style="margin-top: 15px;">
+            <button class="close-btn" onclick="closeModal()">Закрыть</button>
+            <button id="registerButton" class="register-btn">Записаться</button>
+        </div>
+    </div>
+</div>
 
-<footer>
-  <p>© 2025 Kini × Yessenov | Event Management System</p>
-</footer>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const events = {{ events_json|safe }};
+    const calendarEl = document.getElementById('calendar');
+    const calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'dayGridMonth',
+        locale: 'ru',
+        height: 650,
+        events: events,
+        eventClick: function(info) {
+            const event = info.event;
+            document.getElementById('modalTitle').innerText = event.title;
+            document.getElementById('modalPlace').innerText = event.extendedProps.place || '—';
+            document.getElementById('modalDate').innerText = new Date(event.start).toLocaleString('ru-RU');
+            document.getElementById('registerButton').onclick = function() {
+                window.location.href = '/register-event/' + event.id + '/';
+            };
+            document.getElementById('eventModal').style.display = 'flex';
+        },
+        headerToolbar: {
+            left: 'prev,next today',
+            center: 'title',
+            right: 'dayGridMonth,timeGridWeek,timeGridDay'
+        },
+        eventColor: '#ff784e',
+        eventTextColor: 'white'
+    });
+    calendar.render();
+});
+
+function closeModal() {
+    document.getElementById('eventModal').style.display = 'none';
+}
+</script>
 
 </body>
 </html>

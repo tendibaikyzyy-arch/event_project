@@ -3,5 +3,5 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('events.urls')),  # теперь все страницы из events будут работать
+    path('', include('events.urls')),  # ✅ барлық маршрут events ішінен келеді
 ]
