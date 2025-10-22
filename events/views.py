@@ -14,7 +14,7 @@ def register_view(request):
         password = request.POST['password']
         User.objects.create_user(username=username, password=password)
         return redirect('login')
-    return render(request, 'register.html')
+    return render(request, 'events/register.html')
 
 def login_view(request):
     if request.method == 'POST':
@@ -24,7 +24,7 @@ def login_view(request):
         if user:
             login(request, user)
             return redirect('dashboard')
-    return render(request, 'login.html')
+    return render(request, 'events/login.html')
 
 def logout_view(request):
     logout(request)
@@ -33,7 +33,7 @@ def logout_view(request):
 @login_required
 def dashboard(request):
     # Тек календарь көрсетіледі
-    return render(request, 'dashboard.html')
+    return render(request, 'events/dashboard.html')
 
 @login_required
 def create_event(request):
@@ -48,7 +48,7 @@ def create_event(request):
             created_by=request.user
         )
         return redirect('dashboard')
-    return render(request, 'create_event.html')
+    return render(request, 'events/create_event.html')
 
 @login_required
 def events_json(request):
