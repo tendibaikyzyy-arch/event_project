@@ -8,7 +8,7 @@ from .models import Event
 def home(request):
     return render(request, 'events/home.html')
 
-ddef register(request):
+def register(request):
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')  # ← осылай болу керек
