@@ -1,150 +1,130 @@
-{% load static %}
 <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>🎉 Личный кабинет — KINI × Yessenov</title>
-    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.js"></script>
+    <title>Календарь мероприятий | Yessenov × KINI</title>
+
+    <!-- FullCalendar -->
+    <link href='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.css' rel='stylesheet'>
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.js'></script>
+
+    <!-- Шрифт және стиль -->
     <style>
         body {
-            font-family: 'Segoe UI', sans-serif;
             margin: 0;
-            background: linear-gradient(135deg, #fff7f0, #e0f7fa, #ffe0e0);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f5f6fa;
         }
-        header {
-            background: linear-gradient(135deg, #ffecd2, #fcb69f);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 40px;
-            color: #fff;
-        }
-        header img { height: 45px; }
-        .logout {
-            background: #ff7f50;
-            color: white;
-            padding: 8px 14px;
-            border-radius: 6px;
-            text-decoration: none;
-            font-weight: bold;
-        }
-        .logout:hover { background: #ff5722; }
 
-        main { flex: 1; padding: 30px; text-align: center; }
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 230px;
+            height: 100vh;
+            background: #ffffff;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+            padding: 20px;
+        }
+
+        .sidebar h2 {
+            font-size: 18px;
+            text-align: center;
+            margin-bottom: 30px;
+            color: #005baa;
+        }
+
+        .sidebar img {
+            display: block;
+            margin: 0 auto 15px;
+            width: 80px;
+        }
+
+        .sidebar a {
+            display: block;
+            text-decoration: none;
+            color: #333;
+            padding: 10px 15px;
+            margin: 8px 0;
+            border-radius: 6px;
+            transition: 0.3s;
+        }
+
+        .sidebar a:hover {
+            background: #005baa;
+            color: white;
+        }
+
+        .content {
+            margin-left: 250px;
+            padding: 30px;
+        }
 
         h1 {
-            color: #333;
+            color: #005baa;
             margin-bottom: 20px;
-            text-shadow: 0 1px 1px rgba(0,0,0,0.2);
         }
 
         #calendar {
-            max-width: 900px;
+            max-width: 90%;
             margin: 0 auto;
-            background: white;
+            background: #fff;
             border-radius: 10px;
             padding: 20px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
         }
 
-        /* 🔹 Мероприятия */
-        .events-list {
-            margin-top: 40px;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-        }
-        .event-card {
-            background: white;
-            border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 3px 8px rgba(0,0,0,0.1);
-            text-align: left;
-            transition: transform .3s;
-        }
-        .event-card:hover { transform: scale(1.02); }
-        .event-card h3 { margin: 0; color: #ff5722; }
-        .event-card p { margin: 8px 0; color: #333; }
-
-        .btn {
-            background: #ff7f50;
-            color: white;
-            border: none;
-            padding: 8px 14px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-        .btn:hover { background: #ff5722; }
-
-        footer {
-            background: #333;
-            color: #fff;
-            text-align: center;
-            padding: 15px;
+        .logout {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            color: #ff3333;
+            text-decoration: none;
         }
     </style>
 </head>
+
 <body>
-    <!-- 🔹 Шапка -->
-    <header>
-        <img src="{% static 'img/kini.png' %}" alt="Kini">
-        <h2>Личный кабинет студента</h2>
-        <a href="{% url 'logout' %}" class="logout">Выйти</a>
-    </header>
+    <!-- 🔹 Сол жақ навигация -->
+    <div class="sidebar">
+        <img src="{% static 'img/yessenov.png' %}" alt="Yessenov Logo">
+        <h2>Yessenov × KINI</h2>
 
-    <!-- 🔹 Контент -->
-    <main>
-        <h1>📅 Календарь университетских мероприятий</h1>
+        <a href="{% url 'dashboard' %}">📅 Календарь</a>
+        <a href="{% url 'create_event' %}">➕ Қосу</a>
+        <a href="{% url 'events_list' %}">📋 Барлық іс-шаралар</a>
+        <a href="{% url 'my_events' %}">⭐ Менің іс-шараларым</a>
+        <a href="{% url 'notifications' %}">🔔 Хабарламалар</a>
+
+        <a class="logout" href="{% url 'logout' %}">🚪 Шығу</a>
+    </div>
+
+    <!-- 🔹 Негізгі контент -->
+    <div class="content">
+        <h1>Календарь мероприятий</h1>
         <div id="calendar"></div>
-
-        <div class="events-list">
-    <div class="event-card">
-        <h3>Осенний бал 🍁</h3>
-        <p>Место: Актовый зал</p>
-        <p>Дата: 16 октября, 18:00</p>
-        <button class="btn" onclick="window.location.href='/events/1/register/'">Записаться</button>
     </div>
-    <div class="event-card">
-        <h3>Хэллоуин 🎃</h3>
-        <p>Место: Студклуб</p>
-        <p>Дата: 31 октября, 19:00</p>
-        <button class="btn" onclick="window.location.href='/events/2/register/'">Записаться</button>
-    </div>
-    <div class="event-card">
-        <h3>Встреча с деканом 🎓</h3>
-        <p>Место: Конференц-зал</p>
-        <p>Дата: 20 октября, 15:00</p>
-        <button class="btn" onclick="window.location.href='/events/3/register/'">Записаться</button>
-    </div>
-</div>
-    </main>
 
-    <!-- 🔹 Подвал -->
-    <footer>
-        © 2025 Kini × Yessenov | Создано студентами KINI 💛
-    </footer>
-
-    <!-- 🔹 FullCalendar -->
+    <!-- 🔹 FullCalendar Script -->
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const calendarEl = document.getElementById('calendar');
-            const events = JSON.parse('{{ events_json|escapejs }}');
-            const calendar = new FullCalendar.Calendar(calendarEl, {
-                initialView: 'dayGridMonth',
-                locale: 'ru',
-                height: 'auto',
-                events: events,
-                eventClick: function(info) {
-                    alert("📌 " + info.event.title + "\n📍 " + info.event.extendedProps.place);
-                }
-            });
-            calendar.render();
+    document.addEventListener('DOMContentLoaded', function() {
+        var calendarEl = document.getElementById('calendar');
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            locale: 'ru',
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,timeGridWeek'
+            },
+            events: '/events-json/',
+            eventColor: '#005baa',
+            eventClick: function(info) {
+                alert('📍 ' + info.event.title + '\\n📅 ' + info.event.start.toLocaleDateString());
+            }
         });
+        calendar.render();
+    });
     </script>
 </body>
 </html>
