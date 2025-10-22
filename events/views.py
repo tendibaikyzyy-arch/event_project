@@ -8,12 +8,29 @@ from .models import Event
 def home(request):
     return render(request, 'events/home.html')
 
-def register_view(request):
+ddef register(request):
     if request.method == 'POST':
-        username = request.POST['username']
-        password = request.POST['password']
-        User.objects.create_user(username=username, password=password)
+        username = request.POST.get('username')
+        password = request.POST.get('password')  # ← осылай болу керек
+        confirm = request.POST.get('confirm_password')  # егер бар болса
+        
+        if not username or not password:
+            messages.error(request, "Поля не должны быть пустыми!")
+            return render(request, 'events/register.html')
+
+        if password != confirm:
+            messages.error(request, "Пароли не совпадают!")
+            return render(request, 'events/register.html')
+
+        if User.objects.filter(username=username).exists():
+            messages.error(request, "Пользователь с таким именем уже существует!")
+            return render(request, 'events/register.html')
+
+        user = User.objects.create_user(username=username, password=password)
+        user.save()
+        messages.success(request, "Аккаунт успешно создан!")
         return redirect('login')
+
     return render(request, 'events/register.html')
 
 def login_view(request):
