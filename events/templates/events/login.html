@@ -1,48 +1,121 @@
-{% load static%}
+{% load static %}
 <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Вход | Yessenov × KINI</title>
+    <title>Вход — KINI × Yessenov</title>
     <style>
         body {
-            background: url("{% static 'img/kini.png' %}") no-repeat center center fixed;
-            background-size: cover;
-            font-family: 'Segoe UI', sans-serif;
+            margin: 0; padding: 0;
+            font-family: 'Poppins', sans-serif;
+            background: url("{% static 'img/banner1.png' %}") no-repeat center center/cover;
+            height: 100vh;
+            display: flex; justify-content: center; align-items: center;
+            animation: fadeInBg 2s ease-in-out;
         }
-        .form-container {
-            width: 400px;
-            background: rgba(255,255,255,0.9);
-            padding: 30px;
-            border-radius: 10px;
-            margin: 10% auto;
+
+        .container {
+            background: rgba(255, 255, 255, 0.22);
+            backdrop-filter: blur(10px);
+            padding: 50px 65px;
+            border-radius: 20px;
+            box-shadow: 0 0 25px rgba(255, 255, 255, 0.15);
             text-align: center;
+            width: 360px;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeIn 1.5s ease-in-out forwards;
         }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeInBg {
+            from { filter: brightness(0.8); }
+            to { filter: brightness(1); }
+        }
+
+        h2 {
+            color: #fff;
+            margin-bottom: 25px;
+            letter-spacing: 1px;
+            text-shadow: 0 0 10px rgba(255,255,255,0.5);
+        }
+
         input {
-            width: 90%;
-            padding: 10px;
-            margin: 10px 0;
-        }
-        button {
-            background: #005baa;
-            color: white;
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
             border: none;
-            padding: 10px 20px;
             border-radius: 8px;
-            cursor: pointer;
+            background: rgba(255,255,255,0.85);
+            font-size: 15px;
+            outline: none;
         }
+
+        button {
+            background: linear-gradient(135deg, #ff7f50, #ff5722);
+            border: none;
+            color: #fff;
+            padding: 12px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            width: 100%;
+            font-weight: bold;
+            box-shadow: 0 0 15px rgba(255,87,34,0.6);
+            animation: pulse 2.5s infinite;
+            transition: 0.3s;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 15px rgba(255,87,34,0.6); }
+            50% { box-shadow: 0 0 30px rgba(255,140,0,0.9), 0 0 50px rgba(255,87,34,0.7); }
+            100% { box-shadow: 0 0 15px rgba(255,87,34,0.6); }
+        }
+
+        button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(255,87,34,1), 0 0 60px rgba(255,140,0,0.9);
+        }
+
+        a {
+            display: inline-block;
+            margin-top: 15px;
+            color: #fff;
+            text-decoration: none;
+            font-weight: bold;
+            text-shadow: 0 0 6px rgba(0,0,0,0.5);
+        }
+        a:hover {
+            color: #ffb199;
+            text-shadow: 0 0 15px rgba(255,140,0,0.9);
+        }
+
+        .logos {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            animation: fadeIn 2s ease-in-out forwards;
+        }
+        .logos img { height: 45px; filter: drop-shadow(0 0 10px rgba(255,255,255,0.5)); }
     </style>
 </head>
 <body>
-    <div class="form-container">
+    <div class="container">
+        <div class="logos">
+            <img src="{% static 'img/kini.png' %}" alt="Kini">
+            <img src="{% static 'img/yessenov.png' %}" alt="Yessenov">
+        </div>
         <h2>Вход в аккаунт</h2>
         <form method="POST" action="{% url 'login' %}">
             {% csrf_token %}
-            <input type="text" name="username" placeholder="Имя пользователя" required><br>
-            <input type="password" name="password" placeholder="Пароль" required><br>
+            <input type="text" name="username" placeholder="Имя пользователя" required>
+            <input type="password" name="password" placeholder="Пароль" required>
             <button type="submit">Войти</button>
         </form>
-        <p>Нет аккаунта? <a href="{% url 'register' %}">Зарегистрироваться</a></p>
+        <a href="{% url 'register' %}">Нет аккаунта? Зарегистрироваться</a>
     </div>
 </body>
 </html>
