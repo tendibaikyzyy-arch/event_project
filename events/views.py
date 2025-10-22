@@ -18,7 +18,7 @@ def login_view(request):
         if user:
             login(request, user)
             messages.success(request, f'Добро пожаловать, {username}!')
-            return redirect('dashboard')
+            return redirect('/dashboard/')
         else:
             messages.error(request, 'Неверное имя пользователя или пароль.')
     return render(request, 'events/login.html')
