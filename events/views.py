@@ -87,10 +87,10 @@ def create_event(request):
 def register_for_event(request, event_id):
     event = Event.objects.get(id=event_id)
     if Registration.objects.filter(event=event, user=request.user).exists():
-        messages.warning(request, 'Вы уже зарегистрированы.')
+        messages.warning(request, 'Вы уже зарегистрированы на это мероприятие!')
     elif Registration.objects.filter(event=event).count() >= event.capacity:
-        messages.error(request, 'Мест нет!')
+        messages.error(request, 'Мест больше нет 😢')
     else:
         Registration.objects.create(event=event, user=request.user)
-        messages.success(request, 'Вы записались!')
-    return redirect('events_list')
+        messages.success(request, f'Вы успешно записались на "{event.title}"!')
+    return redirect('dashboard')
