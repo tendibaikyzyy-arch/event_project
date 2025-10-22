@@ -6,7 +6,7 @@ from django.http import JsonResponse
 from .models import Event
 
 def home(request):
-    return render(request, 'home.html')
+    return render(request, 'events/home.html')
 
 def register_view(request):
     if request.method == 'POST':
