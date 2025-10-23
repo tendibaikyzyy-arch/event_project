@@ -109,14 +109,19 @@
             <img src="{% static 'img/yessenov.png' %}" alt="Yessenov">
         </div>
         <h2>Регистрация</h2>
-        <form method="post" action="{% url 'register' %}">
-  {% csrf_token %}
-  <input type="text"     name="username"         placeholder="Имя пользователя" required>
-  <input type="password" name="password"         placeholder="Пароль" required>
-  <input type="password" name="confirm_password" placeholder="Повторите пароль" required>
-  <button type="submit">Зарегистрироваться</button>
+        <form method="POST">
+    {% csrf_token %}
+    <h2>Регистрация</h2>
+    
+    <input type="text" name="username" placeholder="Имя пользователя" required><br>
+    <input type="email" name="email" placeholder="Электронная почта" required><br>
+    <input type="password" name="password" placeholder="Пароль" required><br>
+    <input type="password" name="confirm_password" placeholder="Повторите пароль" required><br>
+
+    <button type="submit">Зарегистрироваться</button>
+
+    <p>Уже есть аккаунт? <a href="{% url 'login' %}">Войти</a></p>
 </form>
-        <a href="{% url 'login' %}">Уже есть аккаунт? Войти</a>
     </div>
 </body>
 </html>

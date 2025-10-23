@@ -15,24 +15,35 @@ def home(request):
 # 🧾 Тіркелу (Register)
 def register(request):
     if request.method == 'POST':
-        username = (request.POST.get('username') or '').strip()
-        password = (request.POST.get('password') or '')
-        confirm  = (request.POST.get('confirm_password') or '')
+        username = request.POST.get('username')
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        confirm = request.POST.get('confirm_password')
 
-        print(f"[REGISTER] username='{username}', has_password={bool(password)}")  # лог
-
-        # базовые проверки
-        if not username or not password or not confirm:
-            messages.error(request, 'Заполните все поля.')
+        if not username or not password or not email:
+            messages.error(request, 'Все поля должны быть заполнены!')
             return render(request, 'events/register.html')
 
         if password != confirm:
-            messages.error(request, 'Пароли не совпадают.')
+            messages.error(request, 'Пароли не совпадают!')
             return render(request, 'events/register.html')
 
         if User.objects.filter(username=username).exists():
-            messages.error(request, 'Пользователь с таким именем уже существует.')
+            messages.error(request, 'Пользователь с таким именем уже существует!')
             return render(request, 'events/register.html')
+
+        if User.objects.filter(email=email).exists():
+            messages.error(request, 'Почта уже используется!')
+            return render(request, 'events/register.html')
+
+        # ✅ Пользователь құру email-мен бірге
+        user = User.objects.create_user(username=username, email=email, password=password)
+        user.save()
+        messages.success(request, 'Аккаунт успешно создан! Теперь войдите.')
+
+        return redirect('login')
+
+    return render(request, 'events/register.html')
 
         # создать юзера
         user = User.objects.create_user(username=username, password=password)
