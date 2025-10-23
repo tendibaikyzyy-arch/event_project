@@ -36,27 +36,13 @@ def register(request):
             messages.error(request, 'Почта уже используется!')
             return render(request, 'events/register.html')
 
-        # ✅ Пользователь құру email-мен бірге
+        # ✅ Создаем пользователя с email
         user = User.objects.create_user(username=username, email=email, password=password)
         user.save()
-        messages.success(request, 'Аккаунт успешно создан! Теперь войдите.')
 
-        return redirect('login')
-
-    return render(request, 'events/register.html')
-
-        # создать юзера
-        user = User.objects.create_user(username=username, password=password)
-        user.save()
-        print(f"[REGISTER] created user id={user.id}")
-
-        # сразу логиним и ведём на дашборд
+        # ✅ Сразу логиним и ведем на дашборд
         login(request, user)
-        request.session['user_id'] = user.id
-        request.session.modified = True
-        print(f"[REGISTER] logged in user id={user.id}, session_key={request.session.session_key}")
-
-        messages.success(request, f'Аккаунт создан. Добро пожаловать, {user.username}!')
+        messages.success(request, 'Аккаунт успешно создан!')
         return redirect('dashboard')
 
     return render(request, 'events/register.html')
