@@ -3,10 +3,15 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'django-insecure-3k!yoursecretkey12345-test-project'
+SECRET_KEY = 'django-insecure-3kjyoursecretkey12345-test-project'
+
 DEBUG = True
+
 ALLOWED_HOSTS = ['*']
 
+# ==========================
+# INSTALLED APPS
+# ==========================
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -14,9 +19,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'events',
+    'events',  # қосылған қосымша
 ]
 
+# ==========================
+# MIDDLEWARE
+# ==========================
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -29,10 +37,13 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'eventsystem.urls'
 
+# ==========================
+# TEMPLATES
+# ==========================
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],
+        'DIRS': [BASE_DIR / 'templates'],  # егер глобал шаблон болса
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -45,8 +56,9 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'eventsystem.wsgi.application'
-
+# ==========================
+# DATABASE
+# ==========================
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -54,22 +66,24 @@ DATABASES = {
     }
 }
 
-LANGUAGE_CODE = 'ru'
-TIME_ZONE = 'Asia/Almaty'
-USE_I18N = True
-USE_TZ = True
-
+# ==========================
+# STATIC FILES
+# ==========================
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [BASE_DIR / 'events' / 'static']
-STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATICFILES_DIRS = [BASE_DIR / "staticfiles"]
+STATIC_ROOT = BASE_DIR / "static"
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
-
+# ==========================
+# LOGIN/LOGOUT CONFIG
+# ==========================
 LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/dashboard/'
 LOGOUT_REDIRECT_URL = '/login/'
 
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+# ==========================
+# COOKIE / SESSION SETTINGS
+# ==========================
+SESSION_COOKIE_SECURE = False
+CSRF_COOKIE_SECURE = False
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False
+CSRF_TRUSTED_ORIGINS = ['https://nazeka777.pythonanywhere.com']
