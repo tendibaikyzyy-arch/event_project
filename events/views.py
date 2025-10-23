@@ -15,29 +15,38 @@ def home(request):
 # 🧾 Тіркелу (Register)
 def register(request):
     if request.method == 'POST':
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-        confirm = request.POST.get('confirm_password')
+        username = (request.POST.get('username') or '').strip()
+        password = (request.POST.get('password') or '')
+        confirm  = (request.POST.get('confirm_password') or '')
 
-        if not username or not password:
-            messages.error(request, 'Поля не должны быть пустыми!')
+        print(f"[REGISTER] username='{username}', has_password={bool(password)}")  # лог
+
+        # базовые проверки
+        if not username or not password or not confirm:
+            messages.error(request, 'Заполните все поля.')
             return render(request, 'events/register.html')
 
         if password != confirm:
-            messages.error(request, 'Пароли не совпадают!')
+            messages.error(request, 'Пароли не совпадают.')
             return render(request, 'events/register.html')
 
         if User.objects.filter(username=username).exists():
-            messages.error(request, 'Пользователь с таким именем уже существует!')
+            messages.error(request, 'Пользователь с таким именем уже существует.')
             return render(request, 'events/register.html')
 
-        # ✅ Пользовательді құру
+        # создать юзера
         user = User.objects.create_user(username=username, password=password)
         user.save()
-        messages.success(request, 'Аккаунт успешно создан!')
+        print(f"[REGISTER] created user id={user.id}")
 
-        # ✅ Тіркелген соң логин бетке бағыттау
-        return redirect('login')
+        # сразу логиним и ведём на дашборд
+        login(request, user)
+        request.session['user_id'] = user.id
+        request.session.modified = True
+        print(f"[REGISTER] logged in user id={user.id}, session_key={request.session.session_key}")
+
+        messages.success(request, f'Аккаунт создан. Добро пожаловать, {user.username}!')
+        return redirect('dashboard')
 
     return render(request, 'events/register.html')
 
@@ -47,20 +56,19 @@ from django.urls import reverse
 
 def login_view(request):
     if request.method == 'POST':
-        username = request.POST.get('username')
-        password = request.POST.get('password')
+        username = (request.POST.get('username') or '').strip()
+        password = request.POST.get('password') or ''
+        print(f"[LOGIN] try username='{username}'")
 
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
-
-            # ✅ Сохраняем сессию явно
             request.session['user_id'] = user.id
             request.session.modified = True
-
-            messages.success(request, f'Добро пожаловать, {user.username}!')
-            return redirect('dashboard')   # ← переход в календарь
+            print(f"[LOGIN] success id={user.id}, session_key={request.session.session_key}")
+            return redirect('dashboard')
         else:
+            print("[LOGIN] failed")
             messages.error(request, 'Неверное имя пользователя или пароль.')
 
     return render(request, 'events/login.html')

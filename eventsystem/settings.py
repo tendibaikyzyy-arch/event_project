@@ -80,16 +80,14 @@ LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/dashboard/'
 LOGOUT_REDIRECT_URL = '/login/'
 
-# ==========================
-# COOKIE / SESSION SETTINGS
-# ==========================
 SESSION_COOKIE_SECURE = False
-CSRF_COOKIE_SECURE = False
+CSRF_COOKIE_SECURE   = False
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 SESSION_COOKIE_SAMESITE = 'Lax'
 
-# 🔹 PythonAnywhere үшін нақты домен көрсету
-SESSION_COOKIE_DOMAIN = None  # ← осылай қалдыр (PythonAnywhere өзі таниды)
-
-# 🔹 CSRF trusted origin
+# важная строка для PythonAnywhere (домен сайта)
 CSRF_TRUSTED_ORIGINS = ['https://nazeka777.pythonanywhere.com']
+
+# 👉 УДАЛИ (или закомментируй), если было:
+# SESSION_COOKIE_DOMAIN = '.pythonanywhere.com'
+# или любая другая строка для SESSION_COOKIE_DOMAIN
