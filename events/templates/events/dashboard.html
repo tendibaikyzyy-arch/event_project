@@ -2,369 +2,286 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8" />
-<title>Личный кабинет — KINI × Yessenov</title>
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta charset="UTF-8">
+<title>KINI × Yessenov — Календарь</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
 <style>
-  /* ===== Глобал + фон (нежный пастельный градиент) ===== */
-  :root{
-    --bg1:#fff7f0; --bg2:#eaf7ff; --bg3:#f5e9ff;
-    --brand:#ff7f50; --brand-dark:#ff5722;
-    --text:#222; --muted:#666; --card:#ffffff;
-    --shadow:0 8px 24px rgba(0,0,0,.12);
-    --line:#f0f0f0;
-  }
-  *{box-sizing:border-box}
-  html,body{height:100%}
-  body{
-    margin:0; color:var(--text); font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial,sans-serif;
-    background: linear-gradient(135deg,var(--bg1),var(--bg2),var(--bg3));
-    background-size: 200% 200%;
-    animation: bgMove 20s ease infinite;
-  }
-  @keyframes bgMove {
-    0%{background-position:0% 50%}
-    50%{background-position:100% 50%}
-    100%{background-position:0% 50%}
-  }
+body {
+  margin: 0;
+  font-family: "Inter", sans-serif;
+  background: linear-gradient(135deg, #fff7f0, #eaf7ff, #f5e9ff);
+  background-size: 300% 300%;
+  animation: gradientMove 15s ease infinite;
+}
+@keyframes gradientMove {
+  0% {background-position: 0% 50%;}
+  50% {background-position: 100% 50%;}
+  100% {background-position: 0% 50%;}
+}
 
-  /* ===== Макет: шапка + колонкалар ===== */
-  header{
-    display:flex; align-items:center; justify-content:space-between;
-    padding:14px 20px; backdrop-filter:saturate(120%) blur(6px);
-  }
-  .logo{height:44px}
-  .brand-title{margin:0 14px; font-weight:800; letter-spacing:.5px; color:#333}
+.container {
+  display: flex;
+  gap: 20px;
+  padding: 20px;
+}
+.sidebar {
+  width: 220px;
+  background: #fff;
+  border-radius: 10px;
+  padding: 15px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+.sidebar h3 {
+  margin-top: 0;
+  font-size: 16px;
+}
+.sidebar a {
+  display: block;
+  text-decoration: none;
+  color: #333;
+  padding: 8px 10px;
+  margin: 6px 0;
+  border-radius: 8px;
+}
+.sidebar a:hover, .sidebar a.active {
+  background: #ffe6d9;
+  font-weight: bold;
+}
+.sidebar button {
+  width: 100%;
+  padding: 10px;
+  background: #ff7f50;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+.sidebar button:hover {background: #ff5722;}
 
-  .wrap{display:grid; grid-template-columns: 260px 1fr; gap:18px; padding:0 18px 24px;}
-  @media (max-width: 980px){ .wrap{grid-template-columns:1fr} }
+.main {
+  flex: 1;
+  background: #fff;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+.top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.top img { height: 40px; }
+.top button {
+  background: #ff7f50;
+  border: none;
+  padding: 10px 14px;
+  color: #fff;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.top button:hover { background: #ff5722; }
 
-  /* ===== Сайдбар ===== */
-  .sidebar{
-    background:var(--card); border:1px solid var(--line); border-radius:14px; box-shadow:var(--shadow);
-    padding:14px; position:sticky; top:14px; height:fit-content;
-  }
-  .userbox{padding:12px 12px 2px 12px}
-  .username{font-weight:800}
-  .menu{margin:10px 0 0; padding:0; list-style:none}
-  .menu li{margin:6px 0}
-  .menu a{
-    display:flex; align-items:center; gap:10px;
-    padding:10px 12px; border-radius:10px; color:var(--text); text-decoration:none;
-    border:1px solid transparent;
-  }
-  .menu a.active, .menu a:hover{background:#fff6f1; border-color:#ffe1d5}
-  .muted{color:var(--muted); font-size:13px; margin:10px 12px}
+.calendar-grid {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 20px;
+  margin-top: 20px;
+}
+.small-cal, .big-cal {
+  background: #fafafa;
+  border-radius: 10px;
+  padding: 10px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+.small-cal h4, .big-cal h4 {
+  text-align: center;
+  margin: 10px 0;
+}
+.small-cal table, .big-cal table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: center;
+}
+.small-cal td, .big-cal td {
+  padding: 8px;
+  border-radius: 6px;
+}
+.small-cal td.has-event {
+  background: #ffe6d9;
+  font-weight: bold;
+}
+.big-cal td.event-day {
+  background: #fff5f0;
+  border: 1px solid #ffccb8;
+}
+.big-cal .event {
+  background: #fff;
+  border: 1px solid #ffccb8;
+  border-radius: 8px;
+  margin: 5px;
+  padding: 6px;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.05);
+}
+.big-cal .event strong {
+  color: #ff5722;
+}
+.big-cal .event small {
+  color: #777;
+  display: block;
+}
 
-  /* ===== Контент карточка ===== */
-  .content{
-    background:var(--card); border:1px solid var(--line); border-radius:14px; box-shadow:var(--shadow);
-    padding:18px;
-  }
-  .topbar{
-    display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;
-    margin-bottom:14px;
-  }
-  .btn{
-    appearance:none; border:none; cursor:pointer; font-weight:700;
-    padding:10px 14px; border-radius:10px; color:#fff; background:var(--brand);
-    box-shadow:0 4px 14px rgba(255,127,80,.35);
-  }
-  .btn:hover{background:var(--brand-dark)}
-  .btn.sec{background:#eef3ff; color:#2f3bff; box-shadow:none}
-  .btn.sec:hover{background:#e3e9ff}
-
-  /* ===== Две колонки календарей ===== */
-  .calgrid{
-    display:grid; grid-template-columns: 320px 1fr; gap:16px;
-  }
-  @media (max-width:1100px){ .calgrid{grid-template-columns:1fr} }
-
-  .card{
-    background:#fff; border:1px solid var(--line); border-radius:12px; padding:12px; box-shadow:var(--shadow);
-  }
-  .card h3{margin:6px 8px 12px; font-size:16px}
-
-  /* ===== Мини-календарь ===== */
-  .mini-cal .head{
-    display:flex; justify-content:space-between; align-items:center; padding:6px 8px;
-  }
-  .mini-cal .grid{
-    display:grid; grid-template-columns: repeat(7, 1fr); gap:6px; padding:8px;
-  }
-  .mini-cal .dow, .mini-cal .cell{
-    text-align:center; padding:8px 0; border-radius:8px; font-size:13px;
-  }
-  .mini-cal .dow{color:var(--muted); font-weight:700}
-  .mini-cal .cell{background:#fafafa; border:1px solid #eee}
-  .mini-cal .cell.today{outline:2px solid #ffd1bf}
-  .mini-cal .cell.has{background:#fff3ec; border-color:#ffd9c8; font-weight:700}
-
-  /* ===== Үлкен календарь ===== */
-  .big-cal .grid{
-    display:grid; grid-template-columns: repeat(7, 1fr); gap:10px; padding:10px;
-  }
-  .bcell{
-    background:#fafafa; border:1px dashed #e9e9e9; border-radius:10px; min-height:110px; padding:8px; position:relative;
-  }
-  .bcell .dnum{position:absolute; top:6px; right:8px; font-size:12px; color:var(--muted)}
-  .event{display:block; margin:4px 0 0; padding:6px 8px; border-radius:8px; font-size:13px;
-    background:#fff; border:1px solid #ffe1d5; box-shadow:0 2px 8px rgba(0,0,0,.05);
-  }
-  .event strong{display:block; color:#333}
-  .event small{color:#888}
-
-  /* ===== Разделы (мероприятия, мои, уведомления) ===== */
-  .section{display:none}
-  .section.active{display:block}
-  .cards{
-    display:grid; grid-template-columns: repeat(auto-fit,minmax(220px,1fr)); gap:14px;
-  }
-  .ecard{
-    background:#fff; border:1px solid var(--line); border-radius:12px; padding:12px; box-shadow:var(--shadow);
-  }
-  .ecard h4{margin:4px 0 8px}
-  .muted2{color:#777; font-size:13px}
+/* Секции */
+.section { display: none; }
+.section.active { display: block; }
+.events-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit,minmax(220px,1fr));
+  gap: 14px;
+}
+.card {
+  background: #fff;
+  border: 1px solid #f0f0f0;
+  border-radius: 10px;
+  padding: 12px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+}
+.card button {
+  background: #ff7f50;
+  color: white;
+  border: none;
+  padding: 8px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.card button:hover {background: #ff5722;}
 </style>
 </head>
 <body>
 
-  <!-- ===== Шапка: логотиптер бөлек ===== -->
-  <header>
-    <div style="display:flex; align-items:center; gap:10px">
-      <img class="logo" src="{% static 'img/yessenov.png' %}" alt="Yessenov">
-      <h1 class="brand-title">Личный кабинет</h1>
-    </div>
-    <img class="logo" src="{% static 'img/kini.png' %}" alt="KINI">
-  </header>
+<div class="top">
+  <img src="{% static 'img/yessenov.png' %}" alt="Yessenov">
+  <img src="{% static 'img/kini.png' %}" alt="KINI">
+</div>
 
-  <div class="wrap">
-    <!-- ===== Сайдбар ===== -->
-    <aside class="sidebar">
-      <div class="userbox">
-        <div class="username">👋 {{ request.user.username }}</div>
-        <div class="muted">Роль: {% if request.user.is_superuser %}Администратор{% else %}Пользователь{% endif %}</div>
-      </div>
-
-      <ul class="menu">
-        <li><a href="#" data-view="cal" class="active">📅 Календарь</a></li>
-        <li><a href="#" data-view="list">📌 Мероприятия</a></li>
-        <li><a href="#" data-view="mine">⭐ Мои события</a></li>
-        <li><a href="#" data-view="notif">🔔 Уведомления</a></li>
-      </ul>
-
-      <div class="muted">Быстрые действия</div>
-      <div style="display:flex; gap:8px; padding:0 12px 8px 12px">
-        <button class="btn" id="bookBtn">+ Забронировать</button>
-        {% if request.user.is_superuser %}
-          <a href="/create-event/" class="btn sec">Создать</a>
-        {% endif %}
-      </div>
-      <div class="muted" style="padding:0 12px"> <a href="/logout/">Выйти</a> </div>
-    </aside>
-
-    <!-- ===== Контент ===== -->
-    <main class="content">
-      <!-- Раздел 1: Два календаря -->
-      <section id="view-cal" class="section active">
-        <div class="topbar">
-          <h2 style="margin:0">Календарь</h2>
-          <div>
-            <button class="btn sec" id="prevMonth">←</button>
-            <button class="btn sec" id="today">Сегодня</button>
-            <button class="btn sec" id="nextMonth">→</button>
-          </div>
-        </div>
-
-        <div class="calgrid">
-          <!-- Мини-календарь -->
-          <div class="card mini-cal">
-            <div class="head">
-              <strong id="miniLabel">Месяц</strong>
-            </div>
-            <div class="grid" id="miniDow"></div>
-            <div class="grid" id="miniDays"></div>
-          </div>
-
-          <!-- Үлкен календарь -->
-          <div class="card big-cal">
-            <h3 id="bigLabel">Месяц</h3>
-            <div class="grid" id="bigGrid"></div>
-          </div>
-        </div>
-      </section>
-
-      <!-- Раздел 2: Список мероприятий -->
-      <section id="view-list" class="section">
-        <div class="topbar"><h2 style="margin:0">Все мероприятия</h2></div>
-        <div class="cards" id="eventsList"></div>
-      </section>
-
-      <!-- Раздел 3: Мои события -->
-      <section id="view-mine" class="section">
-        <div class="topbar"><h2 style="margin:0">Мои события</h2></div>
-        <div id="myEvents" class="cards"></div>
-      </section>
-
-      <!-- Раздел 4: Уведомления -->
-      <section id="view-notif" class="section">
-        <div class="topbar"><h2 style="margin:0">Уведомления</h2></div>
-        <div class="ecard">
-          <p class="muted2">Пока нет новых уведомлений. Подпишитесь на мероприятия, чтобы получать напоминания 💌</p>
-        </div>
-      </section>
-    </main>
+<div class="container">
+  <div class="sidebar">
+    <h3>Меню</h3>
+    <a href="#" class="active" data-view="calendar">📅 Календарь</a>
+    <a href="#" data-view="events">📌 Мероприятия</a>
+    <a href="#" data-view="my">⭐ Мои события</a>
+    <a href="#" data-view="notif">🔔 Уведомления</a>
+    <button id="bookBtn">+ Забронировать</button>
+    {% if request.user.is_superuser %}
+      <a href="/create-event/" class="btn" style="display:block;text-align:center;margin-top:8px;">Создать</a>
+    {% endif %}
+    <a href="/logout/">🚪 Выйти</a>
   </div>
 
+  <div class="main">
+    <section id="calendar" class="section active">
+      <div class="calendar-grid">
+        <div class="small-cal">
+          <h4>Мини-календарь</h4>
+          <table id="miniCal"></table>
+        </div>
+        <div class="big-cal">
+          <h4>Большой календарь</h4>
+          <table id="bigCal"></table>
+        </div>
+        </div>
+    </section>
+
+    <section id="events" class="section">
+      <h2>Все мероприятия</h2>
+      <div class="events-list" id="eventsList"></div>
+    </section>
+
+    <section id="my" class="section">
+      <h2>Мои события</h2>
+      <div class="card"><p>Пока пусто. Забронируйте мероприятие!</p></div>
+    </section>
+
+    <section id="notif" class="section">
+      <h2>Уведомления</h2>
+      <div class="card"><p>Нет уведомлений.</p></div>
+    </section>
+  </div>
+</div>
+
 <script>
-/* ================== ДАННЫЕ: 10 ивентов ================== */
 const EVENTS = [
-  {id:1,  title:"Осенний бал",          date:"2025-10-16", time:"18:00", place:"Актовый зал"},
-  {id:2,  title:"Хэллоуин",             date:"2025-10-31", time:"19:00", place:"Студклуб"},
-  {id:3,  title:"Встреча с деканом",    date:"2025-10-20", time:"15:00", place:"Конф. зал"},
-  {id:4,  title:"Кинозал",              date:"2025-10-22", time:"20:00", place:"Кинозал"},
-  {id:5,  title:"Ярмарка вакансий",     date:"2025-11-01", time:"11:00", place:"Главный корпус"},
-  {id:6,  title:"IT Хакатон",           date:"2025-11-25", time:"09:00", place:"Coworking Hub"},
-  {id:7,  title:"Спортивный турнир",    date:"2025-11-10", time:"17:00", place:"Спортзал"},
-  {id:8,  title:"Эко-волонтёры",        date:"2025-11-12", time:"10:00", place:"Двор кампуса"},
-  {id:9,  title:"Клуб дебатов",         date:"2025-11-18", time:"16:00", place:"Ауд. 203"},
-  {id:10, title:"Курсы Python",         date:"2025-11-20", time:"18:30", place:"Лаб. 1"},
+  {id:1, title:"Осенний бал", date:"2025-10-16", time:"18:00", place:"Актовый зал"},
+  {id:2, title:"Хэллоуин", date:"2025-10-31", time:"19:00", place:"Студклуб"},
+  {id:3, title:"Встреча с деканом", date:"2025-10-20", time:"15:00", place:"Конф. зал"},
+  {id:4, title:"Кинозал", date:"2025-10-22", time:"20:00", place:"Кинозал"},
+  {id:5, title:"Ярмарка вакансий", date:"2025-11-01", time:"11:00", place:"Главный корпус"},
+  {id:6, title:"IT Хакатон", date:"2025-11-25", time:"09:00", place:"Coworking Hub"},
+  {id:7, title:"Спортивный турнир", date:"2025-11-10", time:"17:00", place:"Спортзал"},
+  {id:8, title:"Эко-волонтёры", date:"2025-11-12", time:"10:00", place:"Двор кампуса"},
+  {id:9, title:"Клуб дебатов", date:"2025-11-18", time:"16:00", place:"Ауд. 203"},
+  {id:10, title:"Курсы Python", date:"2025-11-20", time:"18:30", place:"Лаб. 1"},
 ];
 
-/* ================== Навигация (внутри страницы) ================== */
-document.querySelectorAll('.menu a').forEach(a=>{
-  a.addEventListener('click', e=>{
+// ===== Секция переключения =====
+document.querySelectorAll(".sidebar a[data-view]").forEach(a=>{
+  a.onclick = e=>{
     e.preventDefault();
-    document.querySelectorAll('.menu a').forEach(x=>x.classList.remove('active'));
-    a.classList.add('active');
-    const v = a.dataset.view;
-    document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
-    document.getElementById('view-'+v).classList.add('active');
-  });
+    document.querySelectorAll(".sidebar a").forEach(x=>x.classList.remove("active"));
+    a.classList.add("active");
+    document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
+    document.getElementById(a.dataset.view).classList.add("active");
+  };
 });
 
-/* ================== Мини-календарь + Большой календарь ================== */
-const miniLabel = document.getElementById('miniLabel');
-const miniDow   = document.getElementById('miniDow');
-const miniDays  = document.getElementById('miniDays');
-const bigLabel  = document.getElementById('bigLabel');
-const bigGrid   = document.getElementById('bigGrid');
+// ===== Мини и Большой календарь =====
+function renderCalendar() {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = now.getMonth();
+  const days = new Date(year, month+1, 0).getDate();
 
-const DOW = ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'];
-let viewDate = new Date();
-
-function ymd(d){ return d.toISOString().slice(0,10); }
-function firstDayOfMonth(d){ return new Date(d.getFullYear(), d.getMonth(), 1); }
-function daysInMonth(d){ return new Date(d.getFullYear(), d.getMonth()+1, 0).getDate(); }
-
-function renderDOW(){
-  miniDow.innerHTML = '';
-  DOW.forEach(n=>{
-    const el = document.createElement('div');
-    el.className='dow'; el.textContent=n;
-    miniDow.appendChild(el);
-  });
-}
-renderDOW();
-
-function renderCalendars(){
-  const year = viewDate.getFullYear();
-  const month = viewDate.getMonth();
-  const monthName = viewDate.toLocaleString('ru', {month:'long'}).replace(/^./, c=>c.toUpperCase());
-  miniLabel.textContent = ${monthName} ${year};
-  bigLabel.textContent  = ${monthName} ${year};
-
-  // мини
-  miniDays.innerHTML = '';
-  const fd = firstDayOfMonth(viewDate);
-  let startIdx = fd.getDay(); // 0=Вс
-  if (startIdx === 0) startIdx = 7; // Перенос Вс в конец
-  for(let i=1;i<startIdx;i++){
-    const pad = document.createElement('div'); pad.className='cell'; pad.style.visibility='hidden';
-    miniDays.appendChild(pad);
+  let mini = "<tr>";
+  for (let d=1; d<=days; d++) {
+    const date = ${year}-${String(month+1).padStart(2,"0")}-${String(d).padStart(2,"0")};
+    const ev = EVENTS.find(e=>e.date===date);
+    mini += <td class="${ev?'has-event':''}">${d}</td>;
+    if (d%7===0) mini+="</tr><tr>";
   }
-  const dim = daysInMonth(viewDate);
-  const todayStr = ymd(new Date());
+  document.getElementById("miniCal").innerHTML = mini + "</tr>";
 
-  for(let d=1; d<=dim; d++){
-    const el = document.createElement('div');
-    el.className = 'cell';
-    const thisDate = new Date(year, month, d);
-    const ds = ymd(thisDate);
-    if (ds === todayStr) el.classList.add('today');
-    if (EVENTS.some(ev=>ev.date===ds)) el.classList.add('has');
-    el.textContent = d;
-    miniDays.appendChild(el);
+  // Большой календарь
+  let big = "";
+  for (let d=1; d<=days; d++) {
+    const date = ${year}-${String(month+1).padStart(2,"0")}-${String(d).padStart(2,"0")};
+    const evs = EVENTS.filter(e=>e.date===date);
+    if (evs.length>0) {
+      big += <tr><td class="event-day">${d}<br> +
+             evs.map(e=>`<div class='event'><strong>${e.title}</strong><small>${e.time} • ${e.place}</small>
+             <button onclick="location.href='/events/${e.id}/register/'">Забронировать</button></div>`).join('') +
+             </td></tr>;
+    } else {
+      big += <tr><td>${d}</td></tr>;
+    }
   }
-
-  // большой
-  bigGrid.innerHTML = '';
-  // заголовки дней
-  DOW.forEach(n=>{
-    const cap = document.createElement('div');
-    cap.className='bcell'; cap.style.minHeight='32px'; cap.style.background='#fff'; cap.style.border='1px solid #eee';
-    cap.innerHTML = <strong>${n}</strong>;
-    bigGrid.appendChild(cap);
-  });
-  // пустые до первого дня
-  for(let i=1;i<startIdx;i++){
-    const pad = document.createElement('div'); pad.className='bcell'; bigGrid.appendChild(pad);
-  }
-  // дни
-  for(let d=1; d<=dim; d++){
-    const cell = document.createElement('div'); cell.className='bcell';
-    const thisDate = new Date(year, month, d);
-    const ds = ymd(thisDate);
-    cell.innerHTML = <span class="dnum">${d}</span>;
-    // события в этом дне:
-    EVENTS.filter(ev=>ev.date===ds).forEach(ev=>{
-      const a = document.
-      createElement('a');
-      a.className = 'event';
-      a.href = /events/${ev.id}/register/;
-      a.innerHTML = <strong>${ev.title}</strong><small>${ev.time} • ${ev.place}</small>;
-      cell.appendChild(a);
-    });
-    bigGrid.appendChild(cell);
-  }
+  document.getElementById("bigCal").innerHTML = big;
 }
-renderCalendars();
+renderCalendar();
 
-document.getElementById('prevMonth').onclick = ()=>{ viewDate.setMonth(viewDate.getMonth()-1); renderCalendars(); };
-document.getElementById('nextMonth').onclick = ()=>{ viewDate.setMonth(viewDate.getMonth()+1); renderCalendars(); };
-document.getElementById('today').onclick     = ()=>{ viewDate = new Date(); renderCalendars(); };
+// ===== Список мероприятий =====
+const list = document.getElementById("eventsList");
+list.innerHTML = EVENTS.map(e=>`
+<div class='card'>
+  <h4>${e.title}</h4>
+  <p>${e.date} • ${e.time} • ${e.place}</p>
+  <button onclick="location.href='/events/${e.id}/register/'">Забронировать</button>
+</div>`).join("");
 
-/* ================== Список мероприятий (карточки) ================== */
-function renderList(){
-  const box = document.getElementById('eventsList');
-  box.innerHTML = '';
-  EVENTS.forEach(ev=>{
-    const d = document.createElement('div');
-    d.className='ecard';
-    d.innerHTML = `
-      <h4>${ev.title}</h4>
-      <div class="muted2">${ev.date} • ${ev.time} • ${ev.place}</div>
-      <button class="btn" onclick="location.href='/events/${ev.id}/register/'">Забронировать</button>
-    `;
-    box.appendChild(d);
-  });
-}
-renderList();
-
-/* ================== Мои события (демо) ================== */
-function renderMine(){
-  const box = document.getElementById('myEvents');
-  box.innerHTML = `
-    <div class="ecard"><p class="muted2">Пока пусто. Нажмите “Забронировать” у понравившегося события — и оно появится здесь ✨</p></div>
-  `;
-}
-renderMine();
-
-/* ================== Быстрая бронь (по умолчанию — ближайшее) ================== */
-document.getElementById('bookBtn').onclick = ()=>{
-  const soon = [...EVENTS].sort((a,b)=> a.date.localeCompare(b.date))[0];
-  if (soon) location.href = /events/${soon.id}/register/;
-  else alert('Нет доступных мероприятий.');
+// Быстрая бронь
+document.getElementById("bookBtn").onclick = ()=>{
+  const soon = EVENTS[0];
+  location.href = /events/${soon.id}/register/;
 };
 </script>
 </body>
