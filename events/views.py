@@ -43,6 +43,8 @@ def register(request):
 
 
 # 🔐 Кіру (Login)
+from django.urls import reverse
+
 def login_view(request):
     if request.method == 'POST':
         username = request.POST.get('username')
@@ -51,9 +53,11 @@ def login_view(request):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
-            return redirect('/dashboard/')
+            print("✅ LOGIN SUCCESS:", user.username)  # лог тексеру үшін
+            return redirect(reverse('dashboard'))  # ✅ reverse арқылы
         else:
             messages.error(request, 'Неверное имя пользователя или пароль.')
+            print("❌ LOGIN FAILED")
 
     return render(request, 'events/login.html')
 

@@ -86,4 +86,5 @@ LOGOUT_REDIRECT_URL = '/login/'
 SESSION_COOKIE_SECURE = False
 CSRF_COOKIE_SECURE = False
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False
+SESSION_COOKIE_DOMAIN = '.pythonanywhere.com'
 CSRF_TRUSTED_ORIGINS = ['https://nazeka777.pythonanywhere.com']
