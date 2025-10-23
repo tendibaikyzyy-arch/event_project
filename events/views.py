@@ -79,7 +79,7 @@ def dashboard(request):
 @login_required(login_url='login')
 def create_event(request):
     if not request.user.is_superuser:  # 🔒 тек админге рұқсат
-        return redirect('/dashboard/')
+        return redirect('dashboard')
 
     if request.method == 'POST':
         Event.objects.create(
@@ -91,7 +91,7 @@ def create_event(request):
             created_by=request.user,
         )
         messages.success(request, 'Мероприятие успешно создано!')
-        return redirect('/dashboard/')
+        return redirect('dashboard')
 
     return render(request, 'events/create_event.html')
 
