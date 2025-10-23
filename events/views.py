@@ -65,8 +65,9 @@ def logout_view(request):
 
 
 # 📅 Dashboard (Календарь)
-@login_required(login_url='login')
+@login_required(login_url='/login/')
 def dashboard(request):
+    print("DASHBOARD VIEW WORKING ✅")
     return render(request, 'events/dashboard.html')
 
 
