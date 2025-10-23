@@ -6,19 +6,31 @@
 <title>KINI × Yessenov — Календарь</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
+<!-- FullCalendar -->
+<link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+
 <style>
 body {
   margin: 0;
   font-family: "Inter", sans-serif;
-  background: linear-gradient(135deg, #fff7f0, #eaf7ff, #f5e9ff);
+  background: linear-gradient(120deg, #fef6ff, #e6f3ff, #fffaf2);
   background-size: 300% 300%;
-  animation: gradientMove 15s ease infinite;
+  animation: move 15s ease infinite;
 }
-@keyframes gradientMove {
+@keyframes move {
   0% {background-position: 0% 50%;}
   50% {background-position: 100% 50%;}
   100% {background-position: 0% 50%;}
 }
+
+.top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 30px;
+}
+.top img { height: 45px; }
 
 .container {
   display: flex;
@@ -26,22 +38,18 @@ body {
   padding: 20px;
 }
 .sidebar {
-  width: 220px;
-  background: #fff;
+  width: 230px;
+  background: white;
   border-radius: 10px;
   padding: 15px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-}
-.sidebar h3 {
-  margin-top: 0;
-  font-size: 16px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
 .sidebar a {
   display: block;
   text-decoration: none;
   color: #333;
-  padding: 8px 10px;
-  margin: 6px 0;
+  padding: 10px;
+  margin-bottom: 8px;
   border-radius: 8px;
 }
 .sidebar a:hover, .sidebar a.active {
@@ -50,112 +58,25 @@ body {
 }
 .sidebar button {
   width: 100%;
-  padding: 10px;
   background: #ff7f50;
   color: white;
   border: none;
+  padding: 10px;
   border-radius: 8px;
   cursor: pointer;
-  margin-top: 10px;
 }
 .sidebar button:hover {background: #ff5722;}
 
 .main {
   flex: 1;
-  background: #fff;
-  border-radius: 10px;
-  padding: 20px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  background: white;
+  border-radius: 12px;
+  padding: 25px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
 }
-.top {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-.top img { height: 40px; }
-.top button {
-  background: #ff7f50;
-  border: none;
-  padding: 10px 14px;
-  color: #fff;
-  border-radius: 8px;
-  cursor: pointer;
-}
-.top button:hover { background: #ff5722; }
-
-.calendar-grid {
-  display: grid;
-  grid-template-columns: 280px 1fr;
-  gap: 20px;
-  margin-top: 20px;
-}
-.small-cal, .big-cal {
-  background: #fafafa;
-  border-radius: 10px;
-  padding: 10px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-}
-.small-cal h4, .big-cal h4 {
-  text-align: center;
-  margin: 10px 0;
-}
-.small-cal table, .big-cal table {
-  width: 100%;
-  border-collapse: collapse;
-  text-align: center;
-}
-.small-cal td, .big-cal td {
-  padding: 8px;
-  border-radius: 6px;
-}
-.small-cal td.has-event {
-  background: #ffe6d9;
-  font-weight: bold;
-}
-.big-cal td.event-day {
-  background: #fff5f0;
-  border: 1px solid #ffccb8;
-}
-.big-cal .event {
-  background: #fff;
-  border: 1px solid #ffccb8;
-  border-radius: 8px;
-  margin: 5px;
-  padding: 6px;
-  box-shadow: 0 3px 6px rgba(0,0,0,0.05);
-}
-.big-cal .event strong {
-  color: #ff5722;
-}
-.big-cal .event small {
-  color: #777;
-  display: block;
-}
-
-/* Секции */
-.section { display: none; }
-.section.active { display: block; }
-.events-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fit,minmax(220px,1fr));
-  gap: 14px;
-}
-.card {
-  background: #fff;
-  border: 1px solid #f0f0f0;
-  border-radius: 10px;
-  padding: 12px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.07);
-}
-.card button {
-  background: #ff7f50;
-  color: white;
-  border: none;
-  padding: 8px 10px;
-  border-radius: 8px;
-  cursor: pointer;
-}
-.card button:hover {background: #ff5722;}
+h2 {margin-top: 0;}
+.section {display:none;}
+.section.active {display:block;}
 </style>
 </head>
 <body>
@@ -167,122 +88,75 @@ body {
 
 <div class="container">
   <div class="sidebar">
-    <h3>Меню</h3>
     <a href="#" class="active" data-view="calendar">📅 Календарь</a>
     <a href="#" data-view="events">📌 Мероприятия</a>
     <a href="#" data-view="my">⭐ Мои события</a>
     <a href="#" data-view="notif">🔔 Уведомления</a>
-    <button id="bookBtn">+ Забронировать</button>
-    {% if request.user.is_superuser %}
-      <a href="/create-event/" class="btn" style="display:block;text-align:center;margin-top:8px;">Создать</a>
-    {% endif %}
-    <a href="/logout/">🚪 Выйти</a>
+    <button onclick="window.location.href='/logout/'">🚪 Выйти</button>
   </div>
 
   <div class="main">
     <section id="calendar" class="section active">
-      <div class="calendar-grid">
-        <div class="small-cal">
-          <h4>Мини-календарь</h4>
-          <table id="miniCal"></table>
-        </div>
-        <div class="big-cal">
-          <h4>Большой календарь</h4>
-          <table id="bigCal"></table>
-        </div>
-        </div>
+      <div id="calendarContainer"></div>
     </section>
 
     <section id="events" class="section">
       <h2>Все мероприятия</h2>
-      <div class="events-list" id="eventsList"></div>
+      <div id="eventList"></div>
     </section>
 
     <section id="my" class="section">
       <h2>Мои события</h2>
-      <div class="card"><p>Пока пусто. Забронируйте мероприятие!</p></div>
+      <p>У вас пока нет зарегистрированных мероприятий.</p>
     </section>
 
     <section id="notif" class="section">
       <h2>Уведомления</h2>
-      <div class="card"><p>Нет уведомлений.</p></div>
+      <p>Нет новых уведомлений.</p>
     </section>
   </div>
 </div>
 
 <script>
-const EVENTS = [
-  {id:1, title:"Осенний бал", date:"2025-10-16", time:"18:00", place:"Актовый зал"},
-  {id:2, title:"Хэллоуин", date:"2025-10-31", time:"19:00", place:"Студклуб"},
-  {id:3, title:"Встреча с деканом", date:"2025-10-20", time:"15:00", place:"Конф. зал"},
-  {id:4, title:"Кинозал", date:"2025-10-22", time:"20:00", place:"Кинозал"},
-  {id:5, title:"Ярмарка вакансий", date:"2025-11-01", time:"11:00", place:"Главный корпус"},
-  {id:6, title:"IT Хакатон", date:"2025-11-25", time:"09:00", place:"Coworking Hub"},
-  {id:7, title:"Спортивный турнир", date:"2025-11-10", time:"17:00", place:"Спортзал"},
-  {id:8, title:"Эко-волонтёры", date:"2025-11-12", time:"10:00", place:"Двор кампуса"},
-  {id:9, title:"Клуб дебатов", date:"2025-11-18", time:"16:00", place:"Ауд. 203"},
-  {id:10, title:"Курсы Python", date:"2025-11-20", time:"18:30", place:"Лаб. 1"},
-];
-
-// ===== Секция переключения =====
-document.querySelectorAll(".sidebar a[data-view]").forEach(a=>{
-  a.onclick = e=>{
+document.querySelectorAll(".sidebar a[data-view]").forEach(link => {
+  link.onclick = e => {
     e.preventDefault();
-    document.querySelectorAll(".sidebar a").forEach(x=>x.classList.remove("active"));
-    a.classList.add("active");
-    document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
-    document.getElementById(a.dataset.view).classList.add("active");
+    document.querySelectorAll(".sidebar a").forEach(a => a.classList.remove("active"));
+    link.classList.add("active");
+    document.querySelectorAll(".section").forEach(sec => sec.classList.remove("active"));
+    document.getElementById(link.dataset.view).classList.add("active");
   };
 });
 
-// ===== Мини и Большой календарь =====
-function renderCalendar() {
-  const now = new Date();
-  const year = now.getFullYear();
-  const month = now.getMonth();
-  const days = new Date(year, month+1, 0).getDate();
-
-  let mini = "<tr>";
-  for (let d=1; d<=days; d++) {
-    const date = ${year}-${String(month+1).padStart(2,"0")}-${String(d).padStart(2,"0")};
-    const ev = EVENTS.find(e=>e.date===date);
-    mini += <td class="${ev?'has-event':''}">${d}</td>;
-    if (d%7===0) mini+="</tr><tr>";
-  }
-  document.getElementById("miniCal").innerHTML = mini + "</tr>";
-
-  // Большой календарь
-  let big = "";
-  for (let d=1; d<=days; d++) {
-    const date = ${year}-${String(month+1).padStart(2,"0")}-${String(d).padStart(2,"0")};
-    const evs = EVENTS.filter(e=>e.date===date);
-    if (evs.length>0) {
-      big += <tr><td class="event-day">${d}<br> +
-             evs.map(e=>`<div class='event'><strong>${e.title}</strong><small>${e.time} • ${e.place}</small>
-             <button onclick="location.href='/events/${e.id}/register/'">Забронировать</button></div>`).join('') +
-             </td></tr>;
-    } else {
-      big += <tr><td>${d}</td></tr>;
+document.addEventListener('DOMContentLoaded', function() {
+  const calendarEl = document.getElementById('calendarContainer');
+  const calendar = new FullCalendar.Calendar(calendarEl, {
+    initialView: 'dayGridMonth',
+    locale: 'ru',
+    height: 650,
+    headerToolbar: {
+      left: 'prev,next today',
+      center: 'title',
+      right: 'dayGridMonth,timeGridWeek'
+    },
+    events: [
+      { title: 'Осенний бал', start: '2025-10-16T18:00:00', color:'#ffb199' },
+      { title: 'Хэллоуин', start: '2025-10-31T19:00:00', color:'#ff884d' },
+      { title: 'Встреча с деканом', start: '2025-10-20T15:00:00', color:'#ffd580' },
+      { title: 'Кинозал', start: '2025-10-22T20:00:00', color:'#ffc2b3' },
+      { title: 'IT Хакатон', start: '2025-11-05T09:00:00', color:'#c9f0ff' },
+      { title: 'Клуб дебатов', start: '2025-11-10T16:00:00', color:'#b3ffd9' },
+      { title: 'Ярмарка вакансий', start: '2025-11-12T11:00:00', color:'#d4b3ff' },
+      { title: 'Волонтёры KINI', start: '2025-11-18T10:00:00', color:'#ffb3b3' },
+      { title: 'Курс Python', start: '2025-11-20T18:30:00', color:'#b3e6ff' },
+      { title: 'Спортивный турнир', start: '2025-11-25T17:00:00', color:'#ffd1a9' },
+    ],
+    eventClick: function(info) {
+      alert('Мероприятие: ' + info.event.title + '\nДата: ' + info.event.start.toLocaleString());
     }
-  }
-  document.getElementById("bigCal").innerHTML = big;
-}
-renderCalendar();
-
-// ===== Список мероприятий =====
-const list = document.getElementById("eventsList");
-list.innerHTML = EVENTS.map(e=>`
-<div class='card'>
-  <h4>${e.title}</h4>
-  <p>${e.date} • ${e.time} • ${e.place}</p>
-  <button onclick="location.href='/events/${e.id}/register/'">Забронировать</button>
-</div>`).join("");
-
-// Быстрая бронь
-document.getElementById("bookBtn").onclick = ()=>{
-  const soon = EVENTS[0];
-  location.href = /events/${soon.id}/register/;
-};
+  });
+  calendar.render();
+});
 </script>
 </body>
 </html>
