@@ -53,11 +53,15 @@ def login_view(request):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
-            print("✅ LOGIN SUCCESS:", user.username)  # лог тексеру үшін
-            return redirect(reverse('dashboard'))  # ✅ reverse арқылы
+
+            # ✅ Сохраняем сессию явно
+            request.session['user_id'] = user.id
+            request.session.modified = True
+
+            messages.success(request, f'Добро пожаловать, {user.username}!')
+            return redirect('dashboard')   # ← переход в календарь
         else:
             messages.error(request, 'Неверное имя пользователя или пароль.')
-            print("❌ LOGIN FAILED")
 
     return render(request, 'events/login.html')
 
