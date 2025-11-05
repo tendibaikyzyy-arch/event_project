@@ -1,64 +1,19 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="ru">
-<head>
-<meta charset="UTF-8">
-<title>Мои мероприятия</title>
-<style>
-body {
-    font-family: "Inter", sans-serif;
-    background: linear-gradient(135deg, #fff7f0, #fce2d3, #f8e6ff);
-    margin: 0;
-    padding: 0;
-}
-h1 {
-    color: #ff5722;
-    text-align: center;
-    margin: 30px 0;
-}
-.container {
-    width: 80%;
-    margin: auto;
-    background: white;
-    border-radius: 12px;
-    padding: 30px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-}
-.event-card {
-    border: 1px solid #ffd4be;
-    border-radius: 10px;
-    padding: 15px 20px;
-    margin-bottom: 15px;
-    transition: 0.3s;
-}
-.event-card:hover {
-    background: #fff0e5;
-}
-a.back {
-    display: inline-block;
-    margin: 10px 0 0 40px;
-    color: #ff784e;
-    text-decoration: none;
-}
-</style>
-</head>
+<head><meta charset="UTF-8"><title>Мои события</title></head>
 <body>
-
-<h1>Мои регистрации</h1>
-<div class="container">
-    {% if registrations %}
-        {% for reg in registrations %}
-            <div class="event-card">
-                <h3>{{ reg.event.title }}</h3>
-                <p>📅 {{ reg.event.date }} — ⏰ {{ reg.event.time }}</p>
-                <p>📍 {{ reg.event.place }}</p>
-            </div>
-        {% endfor %}
-    {% else %}
-        <p>Вы пока не зарегистрированы на мероприятия.</p>
-    {% endif %}
-</div>
-
-<a href="/dashboard/" class="back">← Назад к календарю</a>
+  <h2>Мои события</h2>
+  <ul>
+    {% for r in regs %}
+      <li>
+        <b>{{ r.event.title }}</b> — {{ r.event.date }} {{ r.event.time }}
+        ({{ r.event.place }})
+      </li>
+    {% empty %}
+      <li>Пока нет записей.</li>
+    {% endfor %}
+  </ul>
+  <p><a href="{% url 'dashboard' %}">⟵ Назад к календарю</a></p>
 </body>
 </html>
