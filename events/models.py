@@ -1,32 +1,40 @@
+# events/models.py
+from django.conf import settings
 from django.db import models
-from django.contrib.auth.models import User
 
 class Event(models.Model):
-    title = models.CharField("Название мероприятия", max_length=100)
-    description = models.TextField("Описание", blank=True)
-    date = models.DateField("Дата проведения")
-    time = models.TimeField("Время проведения")
-    place = models.CharField("Место проведения", max_length=100)
-    capacity = models.PositiveIntegerField("Вместимость", default=50)
-    created_by = models.ForeignKey(User, verbose_name="Создано пользователем", on_delete=models.CASCADE)
+    title = models.CharField(max_length=200)
+    description = models.TextField(blank=True)
+    date = models.DateField()
+    time = models.TimeField(null=True, blank=True)
+    place = models.CharField(max_length=200, blank=True)
+    capacity = models.PositiveIntegerField(default=100)
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+
+    def registered_count(self):
+        return Registration.objects.filter(event=self).count()
+
+    def is_full(self):
+        return self.registered_count() >= self.capacity
 
     def __str__(self):
-        return f"{self.title} — {self.date}"
-
-    class Meta:
-        verbose_name = "Мероприятие"
-        verbose_name_plural = "Мероприятия"
-
+        return self.title
 
 class Registration(models.Model):
-    event = models.ForeignKey(Event, related_name='registrations', on_delete=models.CASCADE)
-    user = models.ForeignKey(User, related_name='registrations', on_delete=models.CASCADE)
-    registered_at = models.DateTimeField(auto_now_add=True)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    event = models.ForeignKey(Event, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        unique_together = ('event', 'user')
-        verbose_name = "Регистрация"
-        verbose_name_plural = "Регистрации"
+        unique_together = ('user', 'event')  # бір user бір event-ке бір-ақ рет
 
-    def __str__(self):
-        return f"{self.user.username} зарегистрирован на {self.event.title}"
+class Notification(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='notifications'
+    )
+    title = models.CharField(max_length=200)
+    body = models.TextField(blank=True)
+    is_read = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
