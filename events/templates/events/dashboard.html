@@ -97,7 +97,7 @@
   const URL_MY_EVENTS_JSON = "{% url 'my_events_json' %}";
   const URL_NOTIFS_JSON = "{% url 'notifications_json' %}";
   // Трюк: параметрі бар URL-ды JS-та құру
-  const URL_BOOK_TEMPLATE = "{% url 'register_for_event' 0 %}"; // "0"-ді id-ге ауыстырамыз
+  const URL_BOOK_TEMPLATE = "{% url 'book_event' 0 %}"; // "0"-ді id-ге ауыстырамыз
 
   // меню переключение
   document.querySelectorAll(".sidebar a[data-view]").forEach(link => {
@@ -206,9 +206,9 @@
   // POST запись на мероприятие (через скрытую форму, с CSRF)
   function book(eventId){
     const form = document.getElementById('bookForm');
-    form.action = URL_BOOK_TEMPLATE.replace('/0/','/'+eventId+'/');
+    form.action = `/events/${eventId}/book/`;
     form.submit();
-  }
+}
 </script>
 </body>
 </html>
