@@ -6,77 +6,30 @@
 <title>KINI × Yessenov — Календарь</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<!-- FullCalendar -->
 <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
 
 <style>
-body {
-  margin: 0;
-  font-family: "Inter", sans-serif;
-  background: linear-gradient(120deg, #fef6ff, #e6f3ff, #fffaf2);
-  background-size: 300% 300%;
-  animation: move 15s ease infinite;
-}
-@keyframes move {
-  0% {background-position: 0% 50%;}
-  50% {background-position: 100% 50%;}
-  100% {background-position: 0% 50%;}
-}
-
-.top {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 15px 30px;
-}
-.top img { height: 45px; }
-
-.container {
-  display: flex;
-  gap: 20px;
-  padding: 20px;
-}
-.sidebar {
-  width: 230px;
-  background: white;
-  border-radius: 10px;
-  padding: 15px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-}
-.sidebar a {
-  display: block;
-  text-decoration: none;
-  color: #333;
-  padding: 10px;
-  margin-bottom: 8px;
-  border-radius: 8px;
-}
-.sidebar a:hover, .sidebar a.active {
-  background: #ffe6d9;
-  font-weight: bold;
-}
-.sidebar button {
-  width: 100%;
-  background: #ff7f50;
-  color: white;
-  border: none;
-  padding: 10px;
-  border-radius: 8px;
-  cursor: pointer;
-}
-.sidebar button:hover {background: #ff5722;}
-
-.main {
-  flex: 1;
-  background: white;
-  border-radius: 12px;
-  padding: 25px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-}
-h2 {margin-top: 0;}
-.section {display:none;}
-.section.active {display:block;}
+  body{margin:0;font-family:"Inter",sans-serif;background:linear-gradient(120deg,#fef6ff,#e6f3ff,#fffaf2);background-size:300% 300%;animation:move 15s ease infinite}
+  @keyframes move{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+  .top{display:flex;justify-content:space-between;align-items:center;padding:15px 30px}
+  .top img{height:45px}
+  .container{display:flex;gap:20px;padding:20px}
+  .sidebar{width:230px;background:#fff;border-radius:10px;padding:15px;box-shadow:0 4px 10px rgba(0,0,0,.1)}
+  .sidebar a{display:block;text-decoration:none;color:#333;padding:10px;margin-bottom:8px;border-radius:8px}
+  .sidebar a:hover,.sidebar a.active{background:#ffe6d9;font-weight:700}
+  .sidebar button{width:100%;background:#ff7f50;color:#fff;border:0;padding:10px;border-radius:8px;cursor:pointer}
+  .sidebar button:hover{background:#ff5722}
+  .main{flex:1;background:#fff;border-radius:12px;padding:25px;box-shadow:0 4px 15px rgba(0,0,0,.1)}
+  h2{margin-top:0}
+  .section{display:none}
+  .section.active{display:block}
+  /* карточки списка */
+  .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
+  .card{border:1px solid #eee;border-radius:12px;padding:14px}
+  .muted{color:#666;font-size:14px}
+  .btn{background:#ff7f50;color:#fff;border:0;padding:8px 12px;border-radius:8px;cursor:pointer}
+  .btn:disabled{opacity:.5;cursor:not-allowed}
 </style>
 </head>
 <body>
@@ -96,67 +49,135 @@ h2 {margin-top: 0;}
   </div>
 
   <div class="main">
+    <!-- КАЛЕНДАРЬ -->
     <section id="calendar" class="section active">
       <div id="calendarContainer"></div>
     </section>
 
+    <!-- СПИСОК МЕРОПРИЯТИЙ -->
     <section id="events" class="section">
       <h2>Все мероприятия</h2>
-      <div id="eventList"></div>
+      <div id="eventList" class="cards"></div>
     </section>
 
+    <!-- МОИ СОБЫТИЯ -->
     <section id="my" class="section">
       <h2>Мои события</h2>
-      <p>У вас пока нет зарегистрированных мероприятий.</p>
+      <div id="myEventList" class="cards"></div>
     </section>
 
+    <!-- УВЕДОМЛЕНИЯ -->
     <section id="notif" class="section">
       <h2>Уведомления</h2>
-      <p>Нет новых уведомлений.</p>
+      <div id="notifList"></div>
     </section>
   </div>
 </div>
 
-<script>
-document.querySelectorAll(".sidebar a[data-view]").forEach(link => {
-  link.onclick = e => {
-    e.preventDefault();
-    document.querySelectorAll(".sidebar a").forEach(a => a.classList.remove("active"));
-    link.classList.add("active");
-    document.querySelectorAll(".section").forEach(sec => sec.classList.remove("active"));
-    document.getElementById(link.dataset.view).classList.add("active");
-  };
-});
+<!-- скрытая форма для POST /book/ с CSRF -->
+<form id="bookForm" method="POST" style="display:none;">
+  {% csrf_token %}
+</form>
 
-document.addEventListener('DOMContentLoaded', function() {
-  const calendarEl = document.getElementById('calendarContainer');
-  const calendar = new FullCalendar.Calendar(calendarEl, {
-    initialView: 'dayGridMonth',
-    locale: 'ru',
-    height: 650,
-    headerToolbar: {
-      left: 'prev,next today',
-      center: 'title',
-      right: 'dayGridMonth,timeGridWeek'
-    },
-    events: [
-      { title: 'Осенний бал', start: '2025-10-16T18:00:00', color:'#ffb199' },
-      { title: 'Хэллоуин', start: '2025-10-31T19:00:00', color:'#ff884d' },
-      { title: 'Встреча с деканом', start: '2025-10-20T15:00:00', color:'#ffd580' },
-      { title: 'Кинозал', start: '2025-10-22T20:00:00', color:'#ffc2b3' },
-      { title: 'IT Хакатон', start: '2025-11-05T09:00:00', color:'#c9f0ff' },
-      { title: 'Клуб дебатов', start: '2025-11-10T16:00:00', color:'#b3ffd9' },
-      { title: 'Ярмарка вакансий', start: '2025-11-12T11:00:00', color:'#d4b3ff' },
-      { title: 'Волонтёры KINI', start: '2025-11-18T10:00:00', color:'#ffb3b3' },
-      { title: 'Курс Python', start: '2025-11-20T18:30:00', color:'#b3e6ff' },
-      { title: 'Спортивный турнир', start: '2025-11-25T17:00:00', color:'#ffd1a9' },
-    ],
-    eventClick: function(info) {
-      alert('Мероприятие: ' + info.event.title + '\nДата: ' + info.event.start.toLocaleString());
-    }
+<script>
+  // переключение вкладок
+  document.querySelectorAll(".sidebar a[data-view]").forEach(link => {
+    link.onclick = e => {
+      e.preventDefault();
+      document.querySelectorAll(".sidebar a").forEach(a => a.classList.remove("active"));
+      link.classList.add("active");
+      document.querySelectorAll(".section").forEach(sec => sec.classList.remove("active"));
+      const id = link.dataset.view;
+      document.getElementById(id).classList.add("active");
+      if (id === 'events') loadEvents();
+      if (id === 'my') loadMyEvents();
+      if (id === 'notif') loadNotifs();
+    };
   });
-  calendar.render();
-});
+
+  // КАЛЕНДАРЬ с бэкенда
+  document.addEventListener('DOMContentLoaded', function() {
+    const el = document.getElementById('calendarContainer');
+    const calendar = new FullCalendar.Calendar(el, {
+      initialView: 'dayGridMonth',
+      locale: 'ru',
+      height: 650,
+      headerToolbar: { left:'prev,next today', center:'title', right:'dayGridMonth,timeGridWeek' },
+      events: '/events-json/',
+      eventClick: function(info) {
+        const start = info.event.start ? info.event.start.toLocaleString() : '';
+        alert('Мероприятие: ' + info.event.title + '\nДата: ' + start);
+      }
+    });
+    calendar.render();
+  });
+
+  // Загрузка списка мероприятий
+  async function loadEvents(){
+    const box = document.getElementById('eventList');
+    box.innerHTML = 'Загрузка...';
+    const res = await fetch('/events-json/');
+    const data = await res.json();
+    if(!data.length){ box.innerHTML = '<p class="muted">Пока нет мероприятий.</p>'; return; }
+    box.innerHTML = '';
+    data.forEach(e => {
+      const left = Math.max((e.capacity||0) - (e.taken||0), 0);
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.innerHTML = `
+        <h3>${e.title}</h3>
+        <p class="muted">${e.description||''}</p>
+        <p><b>Когда:</b> ${e.start.replace('T',' ')}</p>
+        <p><b>Где:</b> ${e.place||'—'}</p>
+        <p><b>Мест:</b> ${e.capacity||'—'} • <b>Свободно:</b> ${left}</p>
+        <button class="btn" ${left<=0?'disabled':''} onclick="book(${e.id})">Записаться</button>
+      `;
+      box.appendChild(card);
+    });
+  }
+
+  // Загрузка "Мои события"
+  async function loadMyEvents(){
+    const box = document.getElementById('myEventList');
+    box.innerHTML = 'Загрузка...';
+    const res = await fetch('/my-events-json/');
+    const data = await res.json();
+    if(!data.length){ box.innerHTML = '<p class="muted">Вы ещё не записались на мероприятия.</p>'; return; }
+    box.innerHTML = '';
+    data.forEach(e => {
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.innerHTML = `
+        <h3>${e.title}</h3>
+        <p><b>Дата:</b> ${e.date} ${e.time||''}</p>
+        <p><b>Место:</b> ${e.place||'—'}</p>
+      `;
+      box.appendChild(card);
+    });
+  }
+
+  // Загрузка уведомлений
+  async function loadNotifs(){
+    const box = document.getElementById('notifList');
+    box.innerHTML = 'Загрузка...';
+    const res = await fetch('/notifications-json/');
+    const data = await res.json();
+    if(!data.length){ box.innerHTML = '<p class="muted">Нет новых уведомлений.</p>'; return; }
+    box.innerHTML = '';
+    data.forEach(n => {
+      const row = document.createElement('div');
+      row.className = 'card';
+      row.innerHTML = `<b>${n.title}</b><br><span class="muted">${n.created}</span><p>${n.body||''}</p>`;
+      box.appendChild(row);
+    });
+  }
+
+  // POST запись на событие
+  function book(eventId){
+    const form = document.getElementById('bookForm');
+    form.action = `/events/${eventId}/book/`;
+    form.submit();
+  }
 </script>
 </body>
 </html>
