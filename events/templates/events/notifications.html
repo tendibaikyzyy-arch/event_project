@@ -1,23 +1,21 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="ru">
-<head><meta charset="UTF-8"><title>Уведомления</title></head>
-<body>
+{% extends 'events/base_dashboard.html' %}
+{% block title %}Уведомления — KINI × Yessenov{% endblock %}
+{% block nav_notif %}active{% endblock %}
+
+{% block content %}
   <h2>Уведомления</h2>
-  <ul>
-    {% for n in notifs %}
-      <li style="margin:10px 0">
-        <b>{{ n.title }}</b><br>
-        <small>{{ n.created_at }}</small><br>
-        {{ n.body }}
-        {% if not n.is_read %}
-          — <a href="{% url 'notif_read' n.id %}">Отметить прочитанным</a>
-        {% endif %}
-      </li>
+  <table>
+    <thead><tr><th>Заголовок</th><th>Текст</th><th>Дата</th></tr></thead>
+    <tbody>
+    {% for n in notes %}
+      <tr>
+        <td>{{ n.title }}</td>
+        <td>{{ n.body }}</td>
+        <td>{{ n.created_at|date:"d.m.Y H:i" }}</td>
+      </tr>
     {% empty %}
-      <li>Уведомлений нет.</li>
+      <tr><td colspan="3">Нет уведомлений.</td></tr>
     {% endfor %}
-  </ul>
-  <p><a href="{% url 'dashboard' %}">⟵ Назад к календарю</a></p>
-</body>
-</html>
+    </tbody>
+  </table>
+{% endblock %}

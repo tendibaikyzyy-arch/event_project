@@ -1,46 +1,33 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-<meta charset="UTF-8">
-<title>Список мероприятий</title>
-<style>
-body {
-  font-family: 'Poppins', sans-serif;
-  background: linear-gradient(135deg, #fff7f0, #ffe6d9);
-  padding: 50px;
-}
-.event {
-  background: white;
-  border-radius: 10px;
-  padding: 20px;
-  margin-bottom: 20px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.1);
-}
-h2 { color: #ff5722; }
-button {
-  background: #ff5722; border: none; color: white;
-  padding: 8px 15px; border-radius: 8px;
-  cursor: pointer;
-}
-a { text-decoration: none; }
-</style>
-</head>
-<body>
-<h2>Список мероприятий</h2>
-{% for event in events %}
-  <div class="event">
-    <h3>{{ event.title }}</h3>
-    <p>{{ event.description }}</p>
-    <p>📅 {{ event.date }} ⏰ {{ event.time }}</p>
-    <p>📍 {{ event.place }}</p>
-    <p>👥 Мест: {{ event.capacity }}</p>
-    <a href="{% url 'register_for_event' event.id %}">
-      <button>Записаться</button>
-    </a>
-  </div>
-{% empty %}
-  <p>Пока нет мероприятий.</p>
-{% endfor %}
-</body>
-</html>
+{% extends 'events/base_dashboard.html' %}
+{% block title %}Мероприятия — KINI × Yessenov{% endblock %}
+{% block nav_events %}active{% endblock %}
+
+{% block content %}
+  <h2>Все мероприятия</h2>
+  <table>
+    <thead>
+      <tr><th>Название</th><th>Дата</th><th>Время</th><th>Место</th><th>Свободно</th><th></th></tr>
+    </thead>
+    <tbody>
+    {% for e in events %}
+      <tr>
+        <td>{{ e.title }}</td>
+        <td>{{ e.date }}</td>
+        <td>{{ e.time|default:"—" }}</td>
+        <td>{{ e.place|default:"—" }}</td>
+        <td>{{ e.capacity|add:-e.registered_count }} / {{ e.capacity }}</td>
+        <td>
+          <form action="{% url 'register_for_event' e.id %}" method="post" style="margin:0">
+            {% csrf_token %}
+            <button class="btn" {% if e.is_full %}disabled{% endif %}>
+              {% if e.is_full %}Мест нет{% else %}Записаться{% endif %}
+            </button>
+          </form>
+        </td>
+      </tr>
+    {% empty %}
+      <tr><td colspan="6">Пока нет мероприятий.</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

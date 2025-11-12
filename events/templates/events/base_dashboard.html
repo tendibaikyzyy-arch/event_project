@@ -1,0 +1,66 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>{% block title %}KINI × Yessenov{% endblock %}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet">
+
+  <style>
+    body{margin:0;font-family:Inter,system-ui,-apple-system,Arial;
+      background:linear-gradient(120deg,#fef6ff,#e6f3ff,#fffaf2);
+      background-size:300% 300%;animation:mv 15s ease infinite}
+    @keyframes mv{0%{background-position:0 50%}50%{background-position:100% 50%}100%{background-position:0 50%}}
+    .top{display:flex;justify-content:space-between;align-items:center;padding:15px 30px}
+    .top img{height:44px}
+    .wrap{display:flex;gap:20px;padding:20px}
+    .side{width:230px;background:#fff;border-radius:10px;padding:14px;box-shadow:0 4px 10px rgba(0,0,0,.1)}
+    .side a{display:block;text-decoration:none;color:#333;padding:10px;margin-bottom:8px;border-radius:8px}
+    .side a:hover,.side a.active{background:#ffe6d9;font-weight:600}
+    .side .logout{width:100%;background:#ff7f50;color:#fff;border:none;padding:10px;border-radius:8px;cursor:pointer}
+    .main{flex:1;background:#fff;border-radius:12px;padding:22px;box-shadow:0 4px 15px rgba(0,0,0,.1)}
+    .msg{margin-bottom:14px}
+    .msg .ok{background:#eaffea;border:1px solid #91d091;padding:8px 10px;border-radius:6px}
+    .msg .err{background:#ffeaea;border:1px solid #e08a8a;padding:8px 10px;border-radius:6px}
+    table{width:100%;border-collapse:collapse}
+    th,td{padding:10px;border-bottom:1px solid #eee;text-align:left}
+    .btn{display:inline-block;background:#ff7f50;color:#fff;padding:8px 12px;border-radius:8px;text-decoration:none;border:none;cursor:pointer}
+    .btn:disabled{opacity:.6;cursor:not-allowed}
+  </style>
+
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+  <div class="top">
+    <img src="{% static 'img/yessenov.png' %}" alt="Yessenov">
+    <img src="{% static 'img/kini.png' %}" alt="KINI">
+  </div>
+
+  <div class="wrap">
+    <div class="side">
+      <a href="{% url 'dashboard' %}" class="{% block nav_dash %}{% endblock %}">📅 Календарь</a>
+      <a href="{% url 'events_list' %}" class="{% block nav_events %}{% endblock %}">📌 Мероприятия</a>
+      <a href="{% url 'my_events' %}" class="{% block nav_my %}{% endblock %}">⭐ Мои события</a>
+      <a href="{% url 'notifications' %}" class="{% block nav_notif %}{% endblock %}">🔔 Уведомления</a>
+      <form action="{% url 'logout' %}" method="post" style="margin-top:10px">{% csrf_token %}
+        <button class="logout">🚪 Выйти</button>
+      </form>
+    </div>
+
+    <div class="main">
+      <div class="msg">
+        {% for m in messages %}
+          <div class="{% if m.tags == 'success' %}ok{% else %}err{% endif %}">{{ m }}</div>
+        {% endfor %}
+      </div>
+
+      {% block content %}{% endblock %}
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

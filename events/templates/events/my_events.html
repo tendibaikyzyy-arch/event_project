@@ -1,19 +1,25 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="ru">
-<head><meta charset="UTF-8"><title>Мои события</title></head>
-<body>
+{% extends 'events/base_dashboard.html' %}
+{% block title %}Мои события — KINI × Yessenov{% endblock %}
+{% block nav_my %}active{% endblock %}
+
+{% block content %}
   <h2>Мои события</h2>
-  <ul>
+  <table>
+    <thead>
+      <tr><th>Название</th><th>Дата</th><th>Время</th><th>Место</th><th>Записан</th></tr>
+    </thead>
+    <tbody>
     {% for r in regs %}
-      <li>
-        <b>{{ r.event.title }}</b> — {{ r.event.date }} {{ r.event.time }}
-        ({{ r.event.place }})
-      </li>
+      <tr>
+        <td>{{ r.event.title }}</td>
+        <td>{{ r.event.date }}</td>
+        <td>{{ r.event.time|default:"—" }}</td>
+        <td>{{ r.event.place|default:"—" }}</td>
+        <td>{{ r.created_at|date:"d.m.Y H:i" }}</td>
+      </tr>
     {% empty %}
-      <li>Пока нет записей.</li>
+      <tr><td colspan="5">Вы ещё не записались ни на одно мероприятие.</td></tr>
     {% endfor %}
-  </ul>
-  <p><a href="{% url 'dashboard' %}">⟵ Назад к календарю</a></p>
-</body>
-</html>
+    </tbody>
+  </table>
+{% endblock %}
