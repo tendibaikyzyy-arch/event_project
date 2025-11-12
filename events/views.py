@@ -1,102 +1,141 @@
+from django.shortcuts import render, redirect
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-from django.http import JsonResponse, HttpResponseBadRequest
-from django.shortcuts import get_object_or_404, redirect, render
+from django.contrib.auth.models import User
+from django.http import JsonResponse
 from django.contrib import messages
 from .models import Event, Registration, Notification
 
-# --- JSON: все события для календаря и списка ---
+# 🏠 Басты бет (Home)
+def home(request):
+    return render(request, 'events/home.html')
+
+
+# 🧾 Тіркелу (Register)
+def register(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        confirm = request.POST.get('confirm_password')
+
+        if not username or not password or not email:
+            messages.error(request, 'Все поля должны быть заполнены!')
+            return render(request, 'events/register.html')
+
+        if password != confirm:
+            messages.error(request, 'Пароли не совпадают!')
+            return render(request, 'events/register.html')
+
+        if User.objects.filter(username=username).exists():
+            messages.error(request, 'Пользователь с таким именем уже существует!')
+            return render(request, 'events/register.html')
+
+        if User.objects.filter(email=email).exists():
+            messages.error(request, 'Почта уже используется!')
+            return render(request, 'events/register.html')
+
+        user = User.objects.create_user(username=username, email=email, password=password)
+        user.save()
+
+        login(request, user)
+        messages.success(request, 'Аккаунт успешно создан!')
+        return redirect('dashboard')
+
+    return render(request, 'events/register.html')
+
+
+# 🔐 Кіру (Login)
+def login_view(request):
+    if request.method == 'POST':
+        username = (request.POST.get('username') or '').strip()
+        password = request.POST.get('password') or ''
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            request.session['user_id'] = user.id
+            return redirect('dashboard')
+        else:
+            messages.error(request, 'Неверное имя пользователя или пароль.')
+    return render(request, 'events/login.html')
+
+
+# 🚪 Шығу (Logout)
+def logout_view(request):
+    logout(request)
+    return redirect('login')
+
+
+# 📅 Dashboard (Календарь)
+@login_required(login_url='/login/')
+def dashboard(request):
+    return render(request, 'events/dashboard.html')
+
+
+# 📋 Барлық іс-шаралардың JSON (FullCalendar + Events list)
 @login_required(login_url='/login/')
 def events_json(request):
-    events = (
-        Event.objects
-        .select_related('created_by')
-        .order_by('date', 'time')
-    )
-
+    events = Event.objects.all()
     data = []
     for e in events:
-        # ISO "start" для FullCalendar и для списка
-        start = str(e.date)
-        if e.time:
-            start = f"{e.date}T{e.time}"
-
         data.append({
-            "id": e.id,
-            "title": e.title,
-            "description": e.description or "",
-            "start": start,
-            "place": e.place or "",
-            "capacity": e.capacity,
-            "taken": Registration.objects.filter(event=e).count(),
+            'id': e.id,
+            'title': e.title,
+            'description': e.description,
+            'start': str(e.date) + ('T' + str(e.time) if e.time else ''),
+            'place': e.place,
+            'capacity': e.capacity,
+            'taken': e.registered_count(),
         })
     return JsonResponse(data, safe=False)
 
-# --- JSON: мои события ---
+
+# 🧾 Мероприятиеге жазылу (Book/Register)
+@login_required(login_url='/login/')
+def book_event(request, event_id):
+    event = Event.objects.get(id=event_id)
+    if event.is_full():
+        messages.error(request, 'К сожалению, все места заняты.')
+        return redirect('dashboard')
+
+    reg, created = Registration.objects.get_or_create(user=request.user, event=event)
+    if not created:
+        messages.warning(request, 'Вы уже зарегистрированы на это мероприятие.')
+    else:
+        Notification.objects.create(
+            user=request.user,
+            title=f"Вы записались на '{event.title}'",
+            body=f"Дата: {event.date}, Время: {event.time or 'уточняется'}, Место: {event.place}"
+        )
+        messages.success(request, f"Вы успешно записались на {event.title}!")
+
+    return redirect('dashboard')
+
+
+# ⭐ Менің оқиғаларым (My Events JSON)
 @login_required(login_url='/login/')
 def my_events_json(request):
-    regs = (
-        Registration.objects
-        .filter(user=request.user)
-        .select_related('event')
-        .order_by('created_at')
-    )
+    regs = Registration.objects.filter(user=request.user)
     data = []
     for r in regs:
-        e = r.event
         data.append({
-            "id": e.id,
-            "title": e.title,
-            "date": str(e.date),
-            "time": str(e.time) if e.time else "",
-            "place": e.place or "",
+            'title': r.event.title,
+            'date': str(r.event.date),
+            'time': str(r.event.time or ''),
+            'place': r.event.place,
         })
     return JsonResponse(data, safe=False)
 
-# --- JSON: уведомления пользователя ---
+
+# 🔔 Уведомления JSON
 @login_required(login_url='/login/')
 def notifications_json(request):
-    notes = (
-        Notification.objects
-        .filter(user=request.user)
-        .order_by('-created_at')[:100]
-    )
+    notifs = Notification.objects.filter(user=request.user).order_by('-created_at')
     data = []
-    for n in notes:
+    for n in notifs:
         data.append({
-            "id": n.id,
-            "title": n.title,
-            "body": n.body or "",
-            "created": n.created_at.strftime("%Y-%m-%d %H:%M"),
-            "is_read": n.is_read,
+            'title': n.title,
+            'body': n.body,
+            'created': n.created_at.strftime('%d.%m.%Y %H:%M')
         })
     return JsonResponse(data, safe=False)
-
-# --- POST: записаться на событие ---
-@login_required(login_url='/login/')
-def register_for_event(request, event_id):
-    if request.method != 'POST':
-        return HttpResponseBadRequest("POST only")
-
-    event = get_object_or_404(Event, id=event_id)
-
-    # проверка на дубликаты/места
-    already = Registration.objects.filter(user=request.user, event=event).exists()
-    taken = Registration.objects.filter(event=event).count()
-    if already:
-        messages.error(request, "Вы уже записаны на это мероприятие.")
-        return redirect('dashboard')
-    if taken >= event.capacity:
-        messages.error(request, "Мест больше нет 😔")
-        return redirect('dashboard')
-
-    Registration.objects.create(user=request.user, event=event)
-
-    # создаём локальное уведомление
-    Notification.objects.create(
-        user=request.user,
-        title="Запись подтверждена",
-        body=f"Вы записались: «{event.title}» ({event.date}{' '+str(event.time) if event.time else ''}).",
-    )
-
-    messages.success(request, "Успешно! Вы записались на мероприятие.")
-    return redirect('dashboard')
