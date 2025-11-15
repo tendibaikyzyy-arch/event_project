@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.db import models
 
+
 class Event(models.Model):
     title       = models.CharField(max_length=200)
     description = models.TextField(blank=True)
@@ -8,6 +9,7 @@ class Event(models.Model):
     time        = models.TimeField(null=True, blank=True)
     place       = models.CharField(max_length=200, blank=True)
     capacity    = models.PositiveIntegerField(default=100)
+
     # Админ өшірілсе, шара жоғалып кетпесін:
     created_by  = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -21,18 +23,21 @@ class Event(models.Model):
     def __str__(self):
         return f"{self.title} — {self.date}"
 
-    @property
-    def taken(self) -> int:
+    # 👉 views.py осыны қолданады
+    def registered_count(self) -> int:
         return self.registrations.count()
 
-    @property
     def is_full(self) -> bool:
-        return self.taken >= self.capacity
+        return self.registered_count() >= self.capacity
 
 
 class Registration(models.Model):
     user  = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name="registrations")
+    event = models.ForeignKey(
+        Event,
+        on_delete=models.CASCADE,
+        related_name="registrations"
+    )
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
