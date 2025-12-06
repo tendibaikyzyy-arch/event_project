@@ -1,31 +1,241 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <title>Отзывы — {{ event.title }}</title>
+  <title>Отзывы — KINI × Yessenov</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <style>
+    body{
+      margin:0;
+      font-family:"Inter",sans-serif;
+      background:linear-gradient(120deg,#fef6ff,#e6f3ff,#fffaf2);
+      background-size:300% 300%;
+      animation:move 15s ease infinite;
+    }
+    @keyframes move{
+      0%{background-position:0% 50%}
+      50%{background-position:100% 50%}
+      100%{background-position:0% 50%}
+    }
+    .top{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      padding:15px 30px;
+    }
+    .top img{height:40px}
+
+    .wrapper{
+      max-width:1100px;
+      margin:20px auto 40px;
+      background:#fff;
+      border-radius:16px;
+      padding:24px 28px;
+      box-shadow:0 4px 18px rgba(0,0,0,.12);
+    }
+
+    h1{
+      margin-top:0;
+      margin-bottom:8px;
+    }
+    .subtitle{
+      color:#666;
+      margin-bottom:20px;
+    }
+
+    .feedback-list{
+      display:flex;
+      flex-direction:column;
+      gap:16px;
+    }
+    .fb-card{
+      border:1px solid #eee;
+      border-radius:12px;
+      padding:14px 16px;
+      background:#fafbfd;
+    }
+    .fb-header{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:6px;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .fb-event{
+      font-weight:600;
+    }
+    .fb-meta{
+      font-size:13px;
+      color:#777;
+    }
+    .fb-rating{
+      color:#ffb300;
+      font-size:14px;
+      white-space:nowrap;
+    }
+    .fb-comment{
+      margin:8px 0 10px;
+      font-size:14px;
+    }
+    .fb-reply-block{
+      margin-top:6px;
+      padding-top:8px;
+      border-top:1px dashed #ddd;
+    }
+    .fb-reply-label{
+      font-size:13px;
+      color:#555;
+      font-weight:600;
+      margin-bottom:4px;
+    }
+    .fb-reply-existing{
+      font-size:14px;
+      padding:8px 10px;
+      border-radius:8px;
+      background:#f0f9ff;
+      border:1px solid #cde6ff;
+      margin-bottom:6px;
+    }
+
+    textarea{
+      width:100%;
+      min-height:60px;
+      resize:vertical;
+      padding:8px;
+      border-radius:8px;
+      border:1px solid #ccc;
+      font-family:inherit;
+      font-size:14px;
+    }
+    .btn-row{
+      margin-top:6px;
+      display:flex;
+      justify-content:flex-end;
+    }
+    button{
+      background:#ff7f50;
+      color:#fff;
+      border:0;
+      padding:7px 14px;
+      border-radius:8px;
+      cursor:pointer;
+      font-size:14px;
+    }
+    button:hover{
+      background:#ff5722;
+    }
+
+    .back-link{
+      display:inline-block;
+      margin-bottom:12px;
+      text-decoration:none;
+      color:#555;
+      font-size:14px;
+    }
+    .back-link:hover{
+      text-decoration:underline;
+    }
+
+    .empty{
+      color:#777;
+      font-size:14px;
+      text-align:center;
+      margin-top:20px;
+    }
+
+    .messages{
+      margin-bottom:10px;
+    }
+    .msg{
+      padding:8px 10px;
+      border-radius:8px;
+      margin-bottom:6px;
+      font-size:14px;
+    }
+    .msg.ok{
+      background:#eaffea;
+      border:1px solid #9dd39d;
+    }
+    .msg.err{
+      background:#ffeaea;
+      border:1px solid #e2a1a1;
+    }
+  </style>
 </head>
 <body>
-  <h1>Отзывы по событию «{{ event.title }}»</h1>
 
-  {% if avg_rating %}
-    <p><b>Средняя оценка:</b> {{ avg_rating|floatformat:1 }} / 5</p>
-  {% endif %}
+<div class="top">
+  <img src="{% static 'img/yessenov.png' %}" alt="Yessenov">
+  <img src="{% static 'img/kini.png' %}" alt="KINI">
+</div>
+
+<div class="wrapper">
+  <a class="back-link" href="{% url 'dashboard' %}">← Назад в дашборд</a>
+
+  <h1>Отзывы по мероприятиям</h1>
+  <p class="subtitle">
+    Здесь администратор и организаторы могут просматривать обратную связь
+    и оставлять ответы на отзывы участников.
+  </p>
+
+  <div class="messages">
+    {% for m in messages %}
+      <div class="msg {% if m.tags == 'success' %}ok{% else %}err{% endif %}">
+        {{ m }}
+      </div>
+    {% endfor %}
+  </div>
 
   {% if feedbacks %}
-    <ul>
+    <div class="feedback-list">
       {% for fb in feedbacks %}
-        <li>
-          <b>{{ fb.user.username }}</b> — ⭐ {{ fb.rating }}<br>
-          <small>{{ fb.created_at }}</small><br>
-          {{ fb.comment|linebreaksbr }}
-        </li>
-        <hr>
-      {% endfor %}
-    </ul>
-  {% else %}
-    <p>Пока нет отзывов.</p>
-  {% endif %}
+        <div class="fb-card">
+          <div class="fb-header">
+            <div>
+              <div class="fb-event">{{ fb.event.title }}</div>
+              <div class="fb-meta">
+                От: {{ fb.user.username }} · {{ fb.created_at|date:"d.m.Y H:i" }}
+              </div>
+            </div>
+            <div class="fb-rating">
+              Оценка: {{ fb.rating }} / 5 ⭐
+            </div>
+          </div>
 
-  <a href="{% url 'dashboard' %}">Назад к дашборду</a>
+          {% if fb.comment %}
+            <div class="fb-comment">
+              {{ fb.comment }}
+            </div>
+          {% endif %}
+
+          <div class="fb-reply-block">
+            <div class="fb-reply-label">Ответ организатора / администратора:</div>
+
+            {% if fb.reply %}
+              <div class="fb-reply-existing">
+                {{ fb.reply }}
+              </div>
+            {% endif %}
+
+            <form method="post">
+              {% csrf_token %}
+              <input type="hidden" name="feedback_id" value="{{ fb.id }}">
+              <textarea name="reply" placeholder="Напишите ответ на этот отзыв...">{{ fb.reply }}</textarea>
+              <div class="btn-row">
+                <button type="submit">Сохранить ответ</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p class="empty">Пока нет отзывов.</p>
+  {% endif %}
+</div>
+
 </body>
 </html>

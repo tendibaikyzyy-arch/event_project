@@ -166,9 +166,10 @@
     <a href="#" data-view="my">⭐ Мои события</a>
     <a href="#" data-view="notif">🔔 Уведомления</a>
 
-    {% if user.is_staff %}
-     <a href="{% url 'reports' %}">📊 Отчёты</a>
-    {% endif %}
+      {% if user.is_staff %}
+    <a href="{% url 'feedback_list' %}">💬 Отзывы</a>
+    <a href="{% url 'reports' %}">📊 Отчёты</a>
+      {% endif %}
 
     <form action="{% url 'logout' %}" method="post" style="margin-top:10px">
       {% csrf_token %}
