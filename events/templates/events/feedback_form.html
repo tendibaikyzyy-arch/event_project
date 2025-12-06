@@ -1,31 +1,227 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
   <title>Отзыв о мероприятии</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <style>
+    body{
+      margin:0;
+      font-family:"Inter",sans-serif;
+      background:linear-gradient(120deg,#fef6ff,#e6f3ff,#fffaf2);
+      background-size:300% 300%;
+      animation:move 15s ease infinite;
+    }
+    @keyframes move{
+      0%{background-position:0% 50%}
+      50%{background-position:100% 50%}
+      100%{background-position:0% 50%}
+    }
+
+    .top{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      padding:15px 30px;
+    }
+    .top img{height:45px}
+
+    .wrapper{
+      min-height:calc(100vh - 80px);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:20px;
+    }
+    .card{
+      width:100%;
+      max-width:520px;
+      background:#fff;
+      border-radius:16px;
+      box-shadow:0 8px 25px rgba(0,0,0,.12);
+      padding:24px 26px 28px;
+    }
+    h1{
+      margin:0 0 6px;
+      font-size:24px;
+    }
+    h2{
+      margin:0 0 16px;
+      font-size:18px;
+      color:#444;
+    }
+    .event-info{
+      font-size:14px;
+      color:#666;
+      margin-bottom:18px;
+    }
+    .event-info b{color:#333;}
+
+    /* Django messages */
+    .messages{margin-bottom:10px;}
+    .msg{
+      padding:8px 10px;
+      border-radius:8px;
+      margin-bottom:6px;
+      font-size:14px;
+    }
+    .msg.ok{
+      background:#eaffea;
+      border:1px solid #9dd39d;
+    }
+    .msg.err{
+      background:#ffeaea;
+      border:1px solid #e2a1a1;
+    }
+
+    label{font-size:14px;color:#333;}
+
+    textarea{
+      width:100%;
+      min-height:90px;
+      resize:vertical;
+      border-radius:10px;
+      border:1px solid #ddd;
+      padding:8px 10px;
+      font-family:inherit;
+      font-size:14px;
+      box-sizing:border-box;
+    }
+    textarea:focus{
+      outline:none;
+      border-color:#ff7f50;
+      box-shadow:0 0 0 2px rgba(255,127,80,.25);
+    }
+
+    /* Рейтинг звёздами */
+    .stars{
+      display:flex;
+      flex-direction:row-reverse;
+      justify-content:flex-end;
+      gap:4px;
+      margin:6px 0 14px;
+    }
+    .stars input{display:none;}
+    .stars label{
+      font-size:26px;
+      cursor:pointer;
+      color:#ddd;
+      transition:color .2s;
+    }
+    .stars input:checked ~ label,
+    .stars label:hover,
+    .stars label:hover ~ label{
+      color:#ffb300;
+    }
+
+    .actions{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-top:16px;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .btn{
+      border:0;
+      border-radius:10px;
+      padding:9px 18px;
+      cursor:pointer;
+      font-size:14px;
+      font-weight:600;
+    }
+    .btn-primary{
+      background:#ff7f50;
+      color:#fff;
+    }
+    .btn-primary:hover{background:#ff5722;}
+    .btn-secondary{
+      background:#f2f2f2;
+      color:#444;
+    }
+    .btn-secondary:hover{
+      background:#e4e4e4;
+    }
+
+    .small{
+      font-size:12px;
+      color:#777;
+      margin-top:4px;
+    }
+
+    @media (max-width:600px){
+      .card{padding:18px 16px 22px;}
+      h1{font-size:20px;}
+    }
+  </style>
 </head>
 <body>
-  <h1>Отзыв о мероприятии "{{ event.title }}"</h1>
 
-  {% if feedback %}
-    <p><i>Вы уже оставляли отзыв. Вы можете изменить его.</i></p>
-  {% endif %}
+<div class="top">
+  <img src="{% static 'img/yessenov.png' %}" alt="Yessenov">
+  <img src="{% static 'img/kini.png' %}" alt="KINI">
+</div>
 
-  <form method="post">
-    {% csrf_token %}
-    <label>Оценка (1–5):</label><br>
-    <input type="number"
-           name="rating"
-           min="1"
-           max="5"
-           required
-           value="{{ feedback.rating|default_if_none:'' }}"><br><br>
+<div class="wrapper">
+  <div class="card">
+    <h1>Отзыв о событии</h1>
+    <h2>{{ event.title }}</h2>
 
-    <label>Комментарий (необязательно):</label><br>
-    <textarea name="comment" rows="4" cols="50">{{ feedback.comment }}</textarea><br><br>
+    <div class="event-info">
+      <div><b>Дата:</b> {{ event.date }}{% if event.time %}, {{ event.time }}{% endif %}</div>
+      {% if event.place %}
+        <div><b>Место:</b> {{ event.place }}</div>
+      {% endif %}
+    </div>
 
-    <button type="submit">Сохранить</button>
-    <a href="{% url 'dashboard' %}">Назад</a>
-  </form>
+    <!-- Django messages -->
+    <div class="messages">
+      {% for m in messages %}
+        <div class="msg {% if m.tags == 'success' %}ok{% else %}err{% endif %}">{{ m }}</div>
+      {% endfor %}
+    </div>
+
+    <form method="post">
+      {% csrf_token %}
+
+      <!-- Оценка -->
+      <label>Ваша оценка мероприятию:</label>
+      <div class="stars">
+        <!-- порядок обратный, чтобы 5 была справа -->
+        <input type="radio" id="star5" name="rating" value="5" required>
+        <label for="star5">★</label>
+
+        <input type="radio" id="star4" name="rating" value="4">
+        <label for="star4">★</label>
+
+        <input type="radio" id="star3" name="rating" value="3">
+        <label for="star3">★</label>
+
+        <input type="radio" id="star2" name="rating" value="2">
+        <label for="star2">★</label>
+
+        <input type="radio" id="star1" name="rating" value="1">
+        <label for="star1">★</label>
+      </div>
+
+      <!-- Комментарий -->
+      <label for="comment">Комментарий (по желанию):</label><br>
+      <textarea id="comment" name="comment"
+                placeholder="Что понравилось? Что можно улучшить?"></textarea>
+
+      <div class="actions">
+        <button type="submit" class="btn btn-primary">Отправить отзыв</button>
+        <a href="{% url 'dashboard' %}" class="btn btn-secondary">← Вернуться на главную</a>
+      </div>
+
+      <div class="small">
+        Отзыв увидят только организаторы и администраторы системы.
+      </div>
+    </form>
+  </div>
+</div>
+
 </body>
 </html>
