@@ -74,3 +74,32 @@ class Notification(models.Model):
 
     def __str__(self):
         return f"Notify({self.user}): {self.title[:30]}"
+
+
+# 🔥 ЖАҢА МОДЕЛЬ – ОТЗЫВЫ
+class Feedback(models.Model):
+    event = models.ForeignKey(
+        Event,
+        on_delete=models.CASCADE,
+        related_name="feedbacks"
+    )
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="feedbacks"
+    )
+    rating = models.PositiveSmallIntegerField(default=5)  # 1–5
+    comment = models.TextField(blank=True)
+
+    # ответ организатора
+    reply = models.TextField(blank=True)
+    replied_at = models.DateTimeField(null=True, blank=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+        unique_together = ("event", "user")   # бір user бір event-ке бір отзыв
+
+    def _str_(self):
+        return f"Feedback({self.event.title} / {self.user})"

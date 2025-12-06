@@ -228,29 +228,24 @@ def register_for_event(request, event_id):
 # ---------------------------
 # Отчёты для администратора
 # ---------------------------
-@login_required(login_url='/login/')
+@login_required
 def reports(request):
-    # только администраторы / персонал
     if not request.user.is_staff:
-        return HttpResponseForbidden('Только администраторы могут смотреть отчёты.')
+        return HttpResponseForbidden("Тек администраторлар көре алады.")
 
-    events = Event.objects.all().order_by('date', 'time')
-    rows = []
+    # Барлық event-терді аламыз
+    events = Event.objects.all().order_by("date")
 
+    # Әр event үшін статистика жасаймыз
+    data = []
     for e in events:
-        total = e.registered_count()
-        attended = e.registrations.filter(attended=True).count()
-
-        avg_rating = e.registrations.filter(
-            rating__isnull=False
-        ).aggregate(Avg('rating'))['rating__avg']
-
-        rows.append({
-            "event": e,
-            "total": total,
-            "attended": attended,
-            "rate": round(attended / total * 100, 1) if total else 0,
-            "avg_rating": round(avg_rating, 1) if avg_rating else "-",
+        total = e.registered_count()   # қанша тіркелді
+        # attendance кейін қосамыз (қазір None)
+        data.append({
+            "title": e.title,
+            "date": e.date,
+            "registered": total,
+            "attendance": "—",  # кейін функция жасаймыз
         })
 
-    return render(request, 'events/reports.html', {"rows": rows})
+    return render(request, "events/reports.html", {"events": data})
