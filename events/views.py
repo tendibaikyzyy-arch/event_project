@@ -6,6 +6,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.db import IntegrityError
+from django.db.models import Avg
 
 from .models import Event, Registration, Notification
 
@@ -223,3 +224,33 @@ def register_for_event(request, event_id):
 
     messages.success(request, 'Вы записаны! Событие появится во вкладке “Мои события”.')
     return redirect('dashboard')
+
+# ---------------------------
+# Отчёты для администратора
+# ---------------------------
+@login_required(login_url='/login/')
+def reports(request):
+    # только администраторы / персонал
+    if not request.user.is_staff:
+        return HttpResponseForbidden('Только администраторы могут смотреть отчёты.')
+
+    events = Event.objects.all().order_by('date', 'time')
+    rows = []
+
+    for e in events:
+        total = e.registered_count()
+        attended = e.registrations.filter(attended=True).count()
+
+        avg_rating = e.registrations.filter(
+            rating__isnull=False
+        ).aggregate(Avg('rating'))['rating__avg']
+
+        rows.append({
+            "event": e,
+            "total": total,
+            "attended": attended,
+            "rate": round(attended / total * 100, 1) if total else 0,
+            "avg_rating": round(avg_rating, 1) if avg_rating else "-",
+        })
+
+    return render(request, 'events/reports.html', {"rows": rows})

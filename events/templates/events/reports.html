@@ -1,0 +1,104 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Отчёты по мероприятиям</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <style>
+    body{
+      margin:0;
+      font-family:"Inter",sans-serif;
+      background:linear-gradient(120deg,#fef6ff,#e6f3ff,#fffaf2);
+      background-size:300% 300%;
+      animation:move 15s ease infinite;
+    }
+    @keyframes move{
+      0%{background-position:0% 50%}
+      50%{background-position:100% 50%}
+      100%{background-position:0% 50%}
+    }
+    .top{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      padding:15px 30px;
+      background:transparent;
+    }
+    .top img{height:45px}
+    .wrap{
+      max-width:1100px;
+      margin:0 auto;
+      background:#fff;
+      border-radius:12px;
+      box-shadow:0 4px 15px rgba(0,0,0,.1);
+      padding:25px;
+    }
+    h1{margin-top:0}
+    table{
+      width:100%;
+      border-collapse:collapse;
+      margin-top:15px;
+      font-size:14px;
+    }
+    th,td{
+      padding:8px 10px;
+      border-bottom:1px solid #eee;
+      text-align:left;
+    }
+    th{
+      background:#fff7f0;
+      font-weight:600;
+    }
+    tr:nth-child(even) td{
+      background:#fafafa;
+    }
+    .back{
+      text-decoration:none;
+      display:inline-block;
+      margin-bottom:10px;
+      background:#ff7f50;
+      color:#fff;
+      padding:8px 12px;
+      border-radius:8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="top">
+    <img src="{% static 'img/yessenov.png' %}" alt="Yessenov">
+    <img src="{% static 'img/kini.png' %}" alt="KINI">
+  </div>
+
+  <div class="wrap">
+    <a href="{% url 'dashboard' %}" class="back">← Назад в кабинет</a>
+    <h1>Отчёты по мероприятиям</h1>
+
+    <table>
+      <tr>
+        <th>Мероприятие</th>
+        <th>Дата</th>
+        <th>Записалось</th>
+        <th>Пришло</th>
+        <th>Посещаемость, %</th>
+        <th>Средняя оценка</th>
+      </tr>
+      {% for row in rows %}
+        <tr>
+          <td>{{ row.event.title }}</td>
+          <td>{{ row.event.date }}{% if row.event.time %} {{ row.event.time }}{% endif %}</td>
+          <td>{{ row.total }}</td>
+          <td>{{ row.attended }}</td>
+          <td>{{ row.rate }}</td>
+          <td>{{ row.avg_rating }}</td>
+        </tr>
+      {% empty %}
+        <tr>
+          <td colspan="6">Пока нет мероприятий.</td>
+        </tr>
+      {% endfor %}
+    </table>
+  </div>
+</body>
+</html>

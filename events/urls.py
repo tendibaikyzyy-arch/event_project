@@ -13,15 +13,15 @@ urlpatterns = [
     path('dashboard/', views.dashboard, name='dashboard'),
 
     # JSON APIs for dashboard
-    path('events-json/',        views.events_json,              name='events_json'),
-    path('my-events-json/',     views.my_events_json,           name='my_events_json'),
-    path('notifications-json/', views.notifications_json,       name='notifications_json'),
-    path('notifications-unread-count/',
-         views.notifications_unread_count,
-         name='notifications_unread_count'),
+    path('events-json/',        views.events_json,        name='events_json'),
+    path('my-events-json/',     views.my_events_json,     name='my_events_json'),
+    path('notifications-json/', views.notifications_json, name='notifications_json'),
 
     # запись на событие
     path('events/<int:event_id>/book/',
          views.register_for_event,
          name='register_for_event'),
+
+    # НОВОЕ: отчёты для администратора
+    path('reports/', views.reports, name='reports'),
 ]
