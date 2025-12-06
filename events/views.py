@@ -204,19 +204,21 @@ def register_for_event(request, event_id):
         messages.info(request, 'Вы уже зарегистрированы на это мероприятие.')
         return redirect('dashboard')
 
-    # Уведомление студенту
+    # 1) Уведомление СТУДЕНТУ
     Notification.objects.create(
         user=request.user,
         title='Успешная регистрация',
         body=f'Вы записались на «{event.title}» ({event.date} {event.time or ""})'
     )
 
-    # Уведомление организатору (если указан created_by)
-    if event.created_by:
+    # 2) Уведомление ОРГАНИЗАТОРУ (created_by),
+    #    если он указан и это не тот же самый человек
+    if event.created_by and event.created_by != request.user:
         Notification.objects.create(
             user=event.created_by,
-            title='Новая регистрация',
-            body=f'Пользователь {request.user.username} записался на «{event.title}».'
+            title='Новая регистрация на ваше мероприятие',
+            body=f'Пользователь {request.user.username} записался на «{event.title}» '
+                 f'({event.date} {event.time or ""}).'
         )
 
     messages.success(request, 'Вы записаны! Событие появится во вкладке “Мои события”.')
