@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Event, Registration, Notification
+from .models import Event, Registration, Notification, Feedback
 
 
 @admin.register(Event)
@@ -23,3 +23,10 @@ class NotificationAdmin(admin.ModelAdmin):
     list_display = ("user", "title", "created_at", "is_read")
     list_filter = ("is_read", "created_at")
     search_fields = ("user__username", "title")
+
+
+@admin.register(Feedback)
+class FeedbackAdmin(admin.ModelAdmin):
+    list_display = ("event", "user", "rating", "created_at")
+    list_filter = ("event", "rating")
+    search_fields = ("comment", "reply", "user__username")

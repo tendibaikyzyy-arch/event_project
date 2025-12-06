@@ -3,7 +3,6 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    # home
     path('', views.home, name='home'),
 
     # auth
@@ -34,7 +33,8 @@ urlpatterns = [
     path('events/<int:event_id>/feedback/',
          views.leave_feedback,
          name='leave_feedback'),
-    path('feedbacks/<int:event_id>/',
+
+    path('feedbacks/',          # <— БЕЗ id
          views.feedback_list,
          name='feedback_list'),
 ]

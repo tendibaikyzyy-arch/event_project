@@ -318,19 +318,15 @@ def leave_feedback(request, event_id):
 # Просмотр отзывов по событию (организатор / админ)
 # ---------------------------
 @login_required(login_url='/login/')
-def feedback_list(request, event_id):
-    event = get_object_or_404(Event, id=event_id)
+def feedback_list(request):
+    """Список всех отзывов для администратора/организатора."""
+    if not request.user.is_staff:
+        return HttpResponseForbidden("Только админ и организаторы могут просматривать отзывы.")
 
-    # только организатор события или staff
-    if (not request.user.is_staff) and (event.created_by != request.user):
-        return HttpResponseForbidden("Только организатор или админ могут видеть эти отзывы.")
+    qs = Feedback.objects.select_related("event", "user").order_by("-created_at")
 
-    feedbacks = event.feedbacks.select_related("user").all()
-    avg_rating = feedbacks.aggregate(avg=Avg("rating"))["avg"]
+    # если это не суперюзер, показываем только отзывы к его мероприятиям
+    if not request.user.is_superuser:
+        qs = qs.filter(event__created_by=request.user)
 
-    ctx = {
-        "event": event,
-        "feedbacks": feedbacks,
-        "avg_rating": avg_rating,
-    }
-    return render(request, "events/feedback_list.html", ctx)
+    return render(request, "events/feedback_list.html", {"feedbacks": qs})
