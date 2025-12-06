@@ -10,7 +10,7 @@ class Event(models.Model):
     place       = models.CharField(max_length=200, blank=True)
     capacity    = models.PositiveIntegerField(default=100)
 
-    # Админ өшірілсе, шара жоғалып кетпесін:
+    # кто создал мероприятие (организатор)
     created_by  = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL, null=True, blank=True,
@@ -18,15 +18,16 @@ class Event(models.Model):
     )
 
     class Meta:
-        ordering = ["date", "time"]  # тізімдер мен календарьға ыңғайлы
+        ordering = ["date", "time"]
 
     def __str__(self):
         return f"{self.title} — {self.date}"
 
-    # 👉 views.py осыны қолданады
+    # сколько всего записалось
     def registered_count(self) -> int:
         return self.registrations.count()
 
+    # заполнено ли мероприятие
     def is_full(self) -> bool:
         return self.registered_count() >= self.capacity
 
@@ -40,8 +41,17 @@ class Registration(models.Model):
     )
     created_at = models.DateTimeField(auto_now_add=True)
 
+    # НОВОЕ: был ли студент на мероприятии
+    attended = models.BooleanField(default=False)
+
+    # НОВОЕ: простая оценка 1–5 (может быть пустой)
+    rating = models.PositiveSmallIntegerField(null=True, blank=True)
+
+    # НОВОЕ: короткий отзыв
+    feedback = models.TextField(blank=True)
+
     class Meta:
-        unique_together = ("user", "event")    # бір user бір event-ке бір-ақ рет
+        unique_together = ("user", "event")
         indexes = [models.Index(fields=["user", "event"])]
 
     def __str__(self):
