@@ -103,20 +103,52 @@
     cursor:not-allowed
   }
 
-  /* Django messages */
+  /* Django messages (оставляем, но прячем, тосты будут отдельные) */
   .messages{margin-bottom:12px}
-  .msg{
-    padding:10px;
+
+  /* TOAST-УВЕДОМЛЕНИЯ (внизу справа) */
+  .toast-container{
+    position:fixed;
+    right:20px;
+    bottom:20px;
+    z-index:9999;
+  }
+  .toast{
+    min-width:260px;
+    margin-top:10px;
+    background:#333;
+    color:#fff;
+    padding:10px 14px;
     border-radius:8px;
-    margin-bottom:8px
+    opacity:0;
+    transform:translateY(10px);
+    transition:opacity .4s ease, transform .4s ease;
+    font-size:14px;
+    box-shadow:0 4px 10px rgba(0,0,0,.2);
   }
-  .msg.ok{
-    background:#eaffea;
-    border:1px solid #9dd39d
+  .toast.show{
+    opacity:1;
+    transform:translateY(0);
   }
-  .msg.err{
-    background:#ffeaea;
-    border:1px solid #e2a1a1
+  .toast-ok{background:#2e7d32;}
+  .toast-err{background:#c62828;}
+
+  /* Подсветка пункта меню для новых уведомлений */
+  .sidebar a.has-new{
+    position:relative;
+    font-weight:700;
+    background:#fff3e0;
+  }
+  .sidebar a.has-new::after{
+    content:'';
+    position:absolute;
+    right:10px;
+    top:50%;
+    width:8px;
+    height:8px;
+    background:#ff4d4f;
+    border-radius:50%;
+    transform:translateY(-50%);
   }
 </style>
 </head>
@@ -132,7 +164,7 @@
     <a href="#" class="active" data-view="calendar">📅 Календарь</a>
     <a href="#" data-view="events">📌 Мероприятия</a>
     <a href="#" data-view="my">⭐ Мои события</a>
-    <a href="#" data-view="notif" id="notifLink">🔔 Уведомления</a>
+    <a href="#" data-view="notif">🔔 Уведомления</a>
 
     <form action="{% url 'logout' %}" method="post" style="margin-top:10px">
       {% csrf_token %}
@@ -141,7 +173,7 @@
   </div>
 
   <div class="main">
-    <!-- Django messages -->
+    <!-- Django messages (превратим их в тосты на JS) -->
     <div class="messages">
       {% for m in messages %}
         <div class="msg {% if m.tags == 'success' %}ok{% else %}err{% endif %}">{{ m }}</div>
@@ -173,6 +205,9 @@
   </div>
 </div>
 
+<!-- Контейнер для toast-уведомлений -->
+<div id="toastContainer" class="toast-container"></div>
+
 <!-- Скрытая форма для POST бронирования (с CSRF) -->
 <form id="bookForm" method="POST" style="display:none;">
   {% csrf_token %}
@@ -183,9 +218,68 @@
   const URL_EVENTS_JSON    = "{% url 'events_json' %}";
   const URL_MY_EVENTS_JSON = "{% url 'my_events_json' %}";
   const URL_NOTIFS_JSON    = "{% url 'notifications_json' %}";
-  const URL_UNREAD_NOTIFS  = "{% url 'notifications_unread_count' %}";
   // Трюк: параметрі бар URL-ды JS-та құру
   const URL_BOOK_TEMPLATE  = "{% url 'register_for_event' 0 %}"; // 0-ді кейін id-ге ауыстырамыз
+
+  // ---------- TOAST-уведомления ----------
+  function createToast(text, type){
+    const box = document.getElementById('toastContainer');
+    const el  = document.createElement('div');
+    el.className = 'toast ' + (type === 'ok' ? 'toast-ok' : 'toast-err');
+    el.textContent = text;
+    box.appendChild(el);
+
+    // Небольшая задержка, чтобы сработал transition
+    setTimeout(()=> el.classList.add('show'), 10);
+
+    // Через 4 секунды скрываем
+    setTimeout(()=>{
+      el.classList.remove('show');
+      setTimeout(()=> el.remove(), 400);
+    }, 4000);
+  }
+
+  // Берём Django messages и показываем как тосты
+  function showDjangoMessagesAsToasts(){
+    const msgBox = document.querySelector('.messages');
+    if(!msgBox) return;
+    const msgs = msgBox.querySelectorAll('.msg');
+    if(!msgs.length) return;
+
+    msgs.forEach(m=>{
+      const text = m.textContent.trim();
+      if(!text) return;
+      const type = m.classList.contains('ok') ? 'ok' : 'err';
+      createToast(text, type);
+    });
+
+    // Старый блок сообщений можно скрыть
+    msgBox.style.display = 'none';
+  }
+
+  // ---------- Бейдж для пункта "Уведомления" ----------
+  function updateNotifMenuBadge(count){
+    const link = document.querySelector('.sidebar a[data-view="notif"]');
+    if(!link) return;
+    if(count > 0){
+      link.textContent = `🔔 Уведомления (${count})`;
+      link.classList.add('has-new');
+    }else{
+      link.textContent = '🔔 Уведомления';
+      link.classList.remove('has-new');
+    }
+  }
+
+  async function initNotifBadge(){
+    try{
+      const res  = await fetch(URL_NOTIFS_JSON);
+      const data = await res.json();
+      // Упрощённо считаем: все уведомления = "непрочитанные"
+      updateNotifMenuBadge(data.length);
+    }catch(err){
+      // тихо игнорируем, если что-то пошло не так
+    }
+  }
 
   // меню переключение
   document.querySelectorAll(".sidebar a[data-view]").forEach(link => {
@@ -200,6 +294,8 @@
       if (id === 'my')     loadMyEvents();
       if (id === 'notif')  {
         loadNotifs();
+        // пользователь зашёл во вкладку уведомлений — считаем, что всё прочитал
+        updateNotifMenuBadge(0);
       }
     };
   });
@@ -224,10 +320,11 @@
     });
     calendar.render();
 
-    // сразу обновим счётчик уведомлений
-    updateNotifBadge();
-    // және әр 30 секунд сайын тексереміз
-    setInterval(updateNotifBadge, 30000);
+    // Показать тосты по Django messages
+    showDjangoMessagesAsToasts();
+
+    // Поставить бейдж на "Уведомления"
+    initNotifBadge();
   });
 
   // Список мероприятий
@@ -288,7 +385,7 @@
     }
   }
 
-  // Уведомления
+  // Уведомления (список во вкладке)
   async function loadNotifs(){
     const box = document.getElementById('notifList');
     box.innerHTML = 'Загрузка...';
@@ -310,9 +407,6 @@
         `;
         box.appendChild(row);
       });
-
-      // после открытия вкладки — счётчик станет 0
-      updateNotifBadge();
     }catch(err){
       box.innerHTML = '<p class="muted">Ошибка загрузки.</p>';
     }
@@ -324,20 +418,6 @@
     // /events/0/book/ -> /events/{id}/book/
     form.action = URL_BOOK_TEMPLATE.replace('/0/', `/${eventId}/`);
     form.submit();
-  }
-
-  // обновление счётчика уведомлений слева
-  async function updateNotifBadge(){
-    const link = document.getElementById('notifLink');
-    if (!link) return;
-    try{
-      const res  = await fetch(URL_UNREAD_NOTIFS);
-      const data = await res.json();
-      const c = data.unread || 0;
-      link.textContent = c > 0 ? `🔔 Уведомления (${c})` : '🔔 Уведомления';
-    }catch(err){
-      // просто не показываем ошибку
-    }
   }
 </script>
 </body>
