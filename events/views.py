@@ -228,27 +228,39 @@ def register_for_event(request, event_id):
 # ---------------------------
 # Отчёты для администратора
 # ---------------------------
-@login_required
+@login_required(login_url='/login/')
 def reports(request):
     if not request.user.is_staff:
         return HttpResponseForbidden("Тек администраторлар көре алады.")
 
-    # Барлық event-терді аламыз
     events = Event.objects.all().order_by("date")
 
-    # Әр event үшін статистика жасаймыз
-    data = []
+    rows = []
     for e in events:
-        total = e.registered_count()   # қанша тіркелді
-        # attendance кейін қосамыз (қазір None)
-        data.append({
-            "title": e.title,
-            "date": e.date,
-            "registered": total,
-            "attendance": "—",  # кейін функция жасаймыз
+        # все регистрации на это мероприятие
+        regs = Registration.objects.filter(event=e)
+
+        total = regs.count()                          # всего записалось
+        attended = regs.filter(attended=True).count() # реально пришло (пока все False, но поле есть)
+
+        # процент посещаемости
+        if total > 0:
+            rate = round(attended / total * 100)
+        else:
+            rate = 0
+
+        # средняя оценка по таблице Feedback
+        avg = Feedback.objects.filter(event=e).aggregate(avg=Avg("rating"))["avg"]
+
+        rows.append({
+            "event": e,
+            "total": total,
+            "attended": attended,
+            "rate": rate,
+            "avg_rating": avg,
         })
 
-    return render(request, "events/reports.html", {"events": data})
+    return render(request, "events/reports.html", {"rows": rows})
 
 # ---------------------------
 # Оставить отзыв о событии
