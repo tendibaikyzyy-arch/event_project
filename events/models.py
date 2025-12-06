@@ -76,30 +76,38 @@ class Notification(models.Model):
         return f"Notify({self.user}): {self.title[:30]}"
 
 
-# 🔥 ЖАҢА МОДЕЛЬ – ОТЗЫВЫ
+# ⬇⬇⬇ НОВОЕ: отзывы по мероприятиям
 class Feedback(models.Model):
+    RATING_CHOICES = [
+        (1, "1 — очень плохо"),
+        (2, "2"),
+        (3, "3 — нормально"),
+        (4, "4"),
+        (5, "5 — отлично"),
+    ]
+
     event = models.ForeignKey(
         Event,
         on_delete=models.CASCADE,
-        related_name="feedbacks"
+        related_name="feedbacks",
     )
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
-        related_name="feedbacks"
+        related_name="feedbacks",
     )
-    rating = models.PositiveSmallIntegerField(default=5)  # 1–5
+
+    rating = models.IntegerField(choices=RATING_CHOICES)
     comment = models.TextField(blank=True)
 
-    # ответ организатора
+    # ✨ Ответ организатора/админа:
     reply = models.TextField(blank=True)
-    replied_at = models.DateTimeField(null=True, blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         ordering = ["-created_at"]
-        unique_together = ("event", "user")   # бір user бір event-ке бір отзыв
 
     def _str_(self):
-        return f"Feedback({self.event.title} / {self.user})"
+        return f"Feedback({self.event.title}, {self.user.username}, {self.rating})"
