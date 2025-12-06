@@ -381,6 +381,7 @@
           <h3>${e.title}</h3>
           <p><b>Дата:</b> ${e.date} ${e.time || ''}</p>
           <p><b>Место:</b> ${e.place || '—'}</p>
+          <button class="btn" onclick="leaveFeedback(${e.id})">Оставить отзыв</button>
         `;
         box.appendChild(card);
       });
@@ -388,6 +389,10 @@
       box.innerHTML = '<p class="muted">Ошибка загрузки.</p>';
     }
   }
+
+  function leaveFeedback(eventId){
+   window.location.href = `/events/${eventId}/feedback/`;
+}
 
   // Уведомления (список во вкладке)
   async function loadNotifs(){

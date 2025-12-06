@@ -8,7 +8,7 @@ from django.contrib.auth.models import User
 from django.db import IntegrityError
 from django.db.models import Avg
 
-from .models import Event, Registration, Notification
+from .models import Event, Registration, Notification, Feedback
 
 
 # ---------------------------
@@ -249,3 +249,76 @@ def reports(request):
         })
 
     return render(request, "events/reports.html", {"events": data})
+
+# ---------------------------
+# Оставить отзыв о событии
+# ---------------------------
+@login_required(login_url='/login/')
+def leave_feedback(request, event_id):
+    event = get_object_or_404(Event, id=event_id)
+
+    # пользователь должен быть зарегистрирован на это мероприятие
+    if not Registration.objects.filter(user=request.user, event=event).exists():
+        messages.error(request, "Вы не записаны на это мероприятие, отзыв оставлять нельзя.")
+        return redirect('dashboard')
+
+    # проверим, есть ли уже отзыв от этого пользователя
+    feedback = Feedback.objects.filter(user=request.user, event=event).first()
+
+    if request.method == 'POST':
+        try:
+            rating = int(request.POST.get('rating') or 0)
+        except ValueError:
+            rating = 0
+
+        comment = (request.POST.get('comment') or '').strip()
+
+        if rating < 1 or rating > 5:
+            messages.error(request, "Оценка должна быть от 1 до 5.")
+            return redirect('leave_feedback', event_id=event.id)
+
+        if feedback:
+            # обновляем существующий отзыв
+            feedback.rating = rating
+            feedback.comment = comment
+            feedback.save()
+            messages.success(request, "Ваш отзыв обновлён.")
+        else:
+            # создаём новый
+            Feedback.objects.create(
+                event=event,
+                user=request.user,
+                rating=rating,
+                comment=comment
+            )
+            messages.success(request, "Спасибо за отзыв!")
+
+        return redirect('dashboard')
+
+    context = {
+        "event": event,
+        "feedback": feedback,
+    }
+    return render(request, "events/feedback_form.html", context)
+
+
+# ---------------------------
+# Просмотр отзывов по событию (организатор / админ)
+# ---------------------------
+@login_required(login_url='/login/')
+def event_feedbacks(request, event_id):
+    event = get_object_or_404(Event, id=event_id)
+
+    # только организатор события или staff
+    if (not request.user.is_staff) and (event.created_by != request.user):
+        return HttpResponseForbidden("Только организатор или админ могут видеть эти отзывы.")
+
+    feedbacks = event.feedbacks.select_related("user").all()
+    avg_rating = feedbacks.aggregate(avg=Avg("rating"))["avg"]
+
+    ctx = {
+        "event": event,
+        "feedbacks": feedbacks,
+        "avg_rating": avg_rating,
+    }
+    return render(request, "events/feedback_list.html", ctx)

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Отзывы — {{ event.title }}</title>
+</head>
+<body>
+  <h1>Отзывы по событию «{{ event.title }}»</h1>
+
+  {% if avg_rating %}
+    <p><b>Средняя оценка:</b> {{ avg_rating|floatformat:1 }} / 5</p>
+  {% endif %}
+
+  {% if feedbacks %}
+    <ul>
+      {% for fb in feedbacks %}
+        <li>
+          <b>{{ fb.user.username }}</b> — ⭐ {{ fb.rating }}<br>
+          <small>{{ fb.created_at }}</small><br>
+          {{ fb.comment|linebreaksbr }}
+        </li>
+        <hr>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>Пока нет отзывов.</p>
+  {% endif %}
+
+  <a href="{% url 'dashboard' %}">Назад к дашборду</a>
+</body>
+</html>

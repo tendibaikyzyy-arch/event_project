@@ -22,6 +22,14 @@ urlpatterns = [
          views.register_for_event,
          name='register_for_event'),
 
+    # НОВОЕ: отзывы
+    path('events/<int:event_id>/feedback/',
+         views.leave_feedback,
+         name='leave_feedback'),
+    path('events/<int:event_id>/feedbacks/',
+         views.event_feedbacks,
+         name='event_feedbacks'),
+
     # НОВОЕ: отчёты для администратора
     path('reports/', views.reports, name='reports'),
 ]
