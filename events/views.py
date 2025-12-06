@@ -306,7 +306,7 @@ def leave_feedback(request, event_id):
 # Просмотр отзывов по событию (организатор / админ)
 # ---------------------------
 @login_required(login_url='/login/')
-def event_feedbacks(request, event_id):
+def feedback_list(request, event_id):
     event = get_object_or_404(Event, id=event_id)
 
     # только организатор события или staff

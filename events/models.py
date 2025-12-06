@@ -109,5 +109,5 @@ class Feedback(models.Model):
     class Meta:
         ordering = ["-created_at"]
 
-    def _str_(self):
+    def __str__(self):
         return f"Feedback({self.event.title}, {self.user.username}, {self.rating})"
