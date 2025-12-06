@@ -1,6 +1,5 @@
 # events/views.py
 from django.shortcuts import render, redirect, get_object_or_404
-from django.urls import reverse
 from django.http import JsonResponse, HttpResponseForbidden
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
@@ -128,7 +127,7 @@ def events_json(request):
             'description': e.description,
             'place': e.place,
             'capacity': e.capacity,
-            'taken': e.registered_count(),        # <= МІНДЕТТІ: method()
+            'taken': e.registered_count(),
         })
     return JsonResponse(data, safe=False)
 
@@ -153,7 +152,7 @@ def my_events_json(request):
 
 
 # ---------------------------
-# API: уведомления
+# API: уведомления (список)
 # ---------------------------
 @login_required(login_url='/login/')
 def notifications_json(request):
@@ -167,7 +166,20 @@ def notifications_json(request):
             'created': n.created_at.strftime('%Y-%m-%d %H:%M'),
             'is_read': n.is_read,
         })
+
+    # всё, что было непрочитанным, считаем прочитанным
+    Notification.objects.filter(user=request.user, is_read=False).update(is_read=True)
+
     return JsonResponse(data, safe=False)
+
+
+# ---------------------------
+# API: количество непрочитанных уведомлений
+# ---------------------------
+@login_required(login_url='/login/')
+def notifications_unread_count(request):
+    count = Notification.objects.filter(user=request.user, is_read=False).count()
+    return JsonResponse({'unread': count})
 
 
 # ---------------------------
@@ -192,12 +204,20 @@ def register_for_event(request, event_id):
         messages.info(request, 'Вы уже зарегистрированы на это мероприятие.')
         return redirect('dashboard')
 
-    # Локальное уведомление (вкладка “Уведомления”)
+    # Уведомление студенту
     Notification.objects.create(
         user=request.user,
         title='Успешная регистрация',
         body=f'Вы записались на «{event.title}» ({event.date} {event.time or ""})'
     )
+
+    # Уведомление организатору (если указан created_by)
+    if event.created_by:
+        Notification.objects.create(
+            user=event.created_by,
+            title='Новая регистрация',
+            body=f'Пользователь {request.user.username} записался на «{event.title}».'
+        )
 
     messages.success(request, 'Вы записаны! Событие появится во вкладке “Мои события”.')
     return redirect('dashboard')
